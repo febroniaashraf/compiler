@@ -224,10 +224,9 @@ FA NFAtoDFA (FA a)
 {
     FA DFA;
     vector<tranistion> transitions = a.get_tran();
-    vector<tranistion> newTran;
     vector<int> finalStates = a.get_final_to_DFA();
     vector<char> symbols;
-
+    DFA.set_startState(0);
     for(int i=0; i<transitions.size(); i++)
     {
         char s = transitions.at(i).symbol;
@@ -267,6 +266,7 @@ FA NFAtoDFA (FA a)
     elements.push_back(elem);
 
     int in=0;
+    int increase=0;
     while(in<elements.size())
     {
         struct DFAelement e = elements.at(in);
@@ -275,7 +275,7 @@ FA NFAtoDFA (FA a)
         {
             e.mark= true;
             e.index=in;
-            int increase=in;
+
             for(int sym=0; sym<symbols.size(); sym++)
             {
                 char currentSymbol = symbols.at(sym);
@@ -312,24 +312,32 @@ FA NFAtoDFA (FA a)
                         }
                     }
                 }
-                if(!inElements){
+                if(!inElements){ //if it is a new state then push it to elements
                     increase++;
                     eNew.index=increase;
-                   elements.push_back(eNew);
+                    elements.push_back(eNew);
+                    bool fin = false; //check if this state is a final state or not
+                    for(int finalS=0;finalS<eNew.eq.size();finalS++){
+                        for(int final2=0;final2<finalStates.size();final2++){
+                            if(eNew.eq.at(finalS) == finalStates.at(final2)){
+                                fin = true;
+                                break;
+                            }
+                        }
+                    }
+                    if(fin){
+                       DFA.set_final_to_DFA(eNew.index);
+                    }
                 }
                 else{
                     eNew.index=indexNew;
                 }
-                struct transition tran;
-                tran.symbol=currentSymbol;
-                tran.vertex_from=in;
-                tran.vertex_to=eNew.index;
-                newTran.push_back(tran);
+                DFA.set_transtions(in,eNew.index,currentSymbol);
             }
         }
         in++;
     }
-
+    DFA.set_vertices(elements.size());
 }
 int main()
 {
