@@ -349,6 +349,7 @@ FA NFAtoDFA (FA a)
         in++;
     }
     DFA.set_vertices(elements.size());
+    return DFA;
 }
 int main()
 {
