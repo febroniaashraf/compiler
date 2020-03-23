@@ -238,7 +238,7 @@ FA NFAtoDFA (FA a)
     vector<int> finalStates = a.get_final_to_DFA();
     vector<char> symbols;
     DFA.set_startState(0);
-    for(int i=0; i<transitions.size(); i++)
+    for(int i=0; i<transitions.size(); i++) //GET ALL SYMBOLS IN NFA
     {
         char s = transitions.at(i).symbol;
         bool contain= false;
@@ -278,16 +278,16 @@ FA NFAtoDFA (FA a)
 
     int in=0;
     int increase=0;
-    while(in<elements.size())
+    while(in<elements.size()) //CALCULATE THE NEW STATES
     {
         struct DFAelement e = elements.at(in);
 
-        if(!e.mark)
+        if(!e.mark) //CHECK IF WE TAKE IT BEFORE OR NOT
         {
             e.mark= true;
             e.index=in;
 
-            for(int sym=0; sym<symbols.size(); sym++)
+            for(int sym=0; sym<symbols.size(); sym++) //GET THE NEXT STATE FOR EVERY SYMBOL
             {
                 char currentSymbol = symbols.at(sym);
                 struct DFAelement eNew;
@@ -305,7 +305,7 @@ FA NFAtoDFA (FA a)
                 }
                 bool inElements = false;
                 int indexNew=0;
-                for(int elem=0;elem<elements.size();elem++){
+                for(int elem=0;elem<elements.size();elem++){ //CHECK IF THIS STATE ADDED BEFORE TO ELEMENTS OR NOT
                     struct DFAelement d = elements.at(elem);
                     if(d.eq.size() == eNew.eq.size()){
                         int tempSize=0;
