@@ -10,16 +10,17 @@ struct transtion
     char symbol;
 };
 
-class NFA
+class FA
 {
 public:
     int no_vertices;
     int final_state;
     int start_state;
+    vector<int> final_To_DFA;
     vector<transtion> transitions;
     vector<int> vertices;
 
-    NFA ()
+    FA ()
     {
         no_vertices = 2;
         final_state = 1;
@@ -34,6 +35,14 @@ public:
         }
     }
 
+    void set_final_to_DFA(int state)
+    {
+        final_To_DFA.push_back(state);
+    }
+    vector<int> get_final_to_DFA()
+    {
+        return final_To_DFA;
+    }
     void set_transtions(int from, int to, char tran_symbol)
     {
         struct transtion tran;
@@ -74,13 +83,14 @@ public:
     }
 };
 
-map<string, NFA> regular_Definitions;
-map<string, NFA> regular_Expression;
-map<string, NFA> key_words;
-map<char, NFA> punctuations;
-NFA concatenation (NFA a, NFA b)
+map<string, FA> regular_Definitions;
+map<string, FA> regular_Expression;
+map<string, FA> key_words;
+map<char, FA> punctuations;
+
+FA concatenation (FA a, FA b)
 {
-    NFA result;
+    FA result;
     result.set_vertices((a.get_no_vertices() + b.get_no_vertices()) - 1);
     result.set_startState(a.get_startState());
     result.set_finalState(b.get_finalState());
@@ -102,9 +112,9 @@ NFA concatenation (NFA a, NFA b)
 
 }
 
-NFA kleene(NFA a)
+FA kleene(FA a)
 {
-    NFA result;
+    FA result;
     result.set_vertices(a.get_no_vertices() + 2);
     result.set_startState(a.get_startState());
     result.set_finalState(a.get_finalState() + 2);
@@ -120,9 +130,9 @@ NFA kleene(NFA a)
     result.set_transtions(result.get_finalState()- 1,result.get_startState() + 1,'L');
     return result;
 }
-NFA positive_closure(NFA a)
+FA positive_closure(FA a)
 {
-    NFA result;
+    FA result;
     result.set_vertices(a.get_no_vertices()+2);
     result.set_startState(a.get_startState());
     result.set_finalState(a.get_finalState()+2);
@@ -138,9 +148,9 @@ NFA positive_closure(NFA a)
     return result;
 }
 
-NFA Union (NFA a, NFA b)
+FA Union (FA a, FA b)
 {
-    NFA result;
+    FA result;
     result.set_vertices(a.get_no_vertices()+b.get_no_vertices()+2);
     result.set_startState(a.get_startState());
     result.set_finalState(result.get_no_vertices()-1);
@@ -171,7 +181,7 @@ void keyWords(string input)
     {
         string word;
         ss >> word;
-        NFA key;
+        FA key;
         key.set_vertices(word.length()+1);
         key.set_startState(0);
         key.set_finalState(word.length());
@@ -179,31 +189,35 @@ void keyWords(string input)
         {
             key.set_transtions(i,i+1,word[i]);
         }
-        key_words.insert(pair<string, NFA>(word, key));
+        key_words.insert(pair<string, FA>(word, key));
     }
     while (ss);
 }
 
-void punc(string input){
- input.erase(std::remove(input.begin(), input.end(), '['), input.end());
- input.erase(std::remove(input.begin(), input.end(), ']'), input.end());
- for(int i=0;i<input.length();i++){
-    NFA key;
-    if(input[i]==' ' || input[i]=='\\'){
-        continue;
+void punc(string input)
+{
+    input.erase(std::remove(input.begin(), input.end(), '['), input.end());
+    input.erase(std::remove(input.begin(), input.end(), ']'), input.end());
+    for(int i=0; i<input.length(); i++)
+    {
+        FA key;
+        if(input[i]==' ' || input[i]=='\\')
+        {
+            continue;
+        }
+        else
+        {
+            key.set_vertices(2);
+            key.set_startState(0);
+            key.set_finalState(1);
+            key.set_transtions(key.get_startState(),key.get_finalState(),input[i]);
+        }
+        punctuations.insert(pair<char, FA>(input[i], key));
     }
-    else {
-        key.set_vertices(2);
-        key.set_startState(0);
-        key.set_finalState(1);
-        key.set_transtions(key.get_startState(),key.get_finalState(),input[i]);
-    }
-    punctuations.insert(pair<char, NFA>(input[i], key));
- }
 }
 int main()
 {
-    NFA result;
+    FA result;
     result.set_finalState(0);
     result.set_finalState(3);
     string word = "{geeks for";
