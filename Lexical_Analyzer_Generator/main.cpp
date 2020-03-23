@@ -9,7 +9,12 @@ struct transtion
     int vertex_to;
     char symbol;
 };
-
+struct DFAelement
+{
+    int index;
+    vector<int> eq;
+    bool mark;
+};
 class FA
 {
 public:
@@ -214,6 +219,28 @@ void punc(string input)
         }
         punctuations.insert(pair<char, FA>(input[i], key));
     }
+}
+FA NFAtoDFA (FA a)
+{
+    FA DFA;
+    vector<transtion> transitions = a.get_tran();
+    vector<int> finalStates = a.get_final_to_DFA();
+    vector<DFAelement> elements;
+    struct DFAelement elem;
+    elem.index =0;
+    elem.mark= false;
+    elem.eq.push_back(a.get_startState());
+    for(int i =0; i< transitions.size(); i++)
+    {
+        for(j=0; j<elem.eq.size(); j++)
+        {
+            if(transitions[i].vertex_from == elem.eq[j] && transitions[i].symbol == 'L')
+            {
+                elem.eq.push_back(transitions[i].vertex_to);
+            }
+        }
+    }
+
 }
 int main()
 {
