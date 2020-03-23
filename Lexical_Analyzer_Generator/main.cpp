@@ -3,7 +3,7 @@
 
 using namespace std;
 
-struct transtion
+struct transition
 {
     int vertex_from;
     int vertex_to;
@@ -22,7 +22,7 @@ public:
     int final_state;
     int start_state;
     vector<int> final_To_DFA;
-    vector<transtion> transitions;
+    vector<transition> transitions;
     vector<int> vertices;
 
     FA ()
@@ -50,7 +50,7 @@ public:
     }
     void set_transtions(int from, int to, char tran_symbol)
     {
-        struct transtion tran;
+        struct transition tran;
         tran.vertex_from = from;
         tran.vertex_to = to;
         tran.symbol = tran_symbol;
@@ -223,22 +223,111 @@ void punc(string input)
 FA NFAtoDFA (FA a)
 {
     FA DFA;
-    vector<transtion> transitions = a.get_tran();
+    vector<tranistion> transitions = a.get_tran();
+    vector<tranistion> newTran;
     vector<int> finalStates = a.get_final_to_DFA();
+    vector<char> symbols;
+
+    for(int i=0; i<transitions.size(); i++)
+    {
+        char s = transitions.at(i).symbol;
+        bool contain= false;
+        for(int j=0; j<symbols.size(); j++)
+        {
+            if(symbols.at(j) == s)
+            {
+                contain=true;
+                break;
+            }
+        }
+        if(!contain)
+        {
+            symbols.push_back(s);
+        }
+    }
     vector<DFAelement> elements;
     struct DFAelement elem;
     elem.index =0;
     elem.mark= false;
     elem.eq.push_back(a.get_startState());
-    for(int i =0; i< transitions.size(); i++)
+    int size_elem =0;
+    while(size_elem < elem.eq.size())  //get S0 closure
     {
-        for(j=0; j<elem.eq.size(); j++)
+        int j = elem.eq.at(size_elem);
+        for(int i =0; i< transitions.size(); i++)
         {
-            if(transitions[i].vertex_from == elem.eq[j] && transitions[i].symbol == 'L')
+            struct transitions t = transitions.at(i);
+            if(t.vertex_from == j && t.symbol == 'L')
             {
-                elem.eq.push_back(transitions[i].vertex_to);
+                elem.eq.push_back(t.vertex_to);
             }
         }
+        size_elem ++;
+    }
+    elements.push_back(elem);
+
+    int in=0;
+    while(in<elements.size())
+    {
+        struct DFAelement e = elements.at(in);
+
+        if(!e.mark)
+        {
+            e.mark= true;
+            e.index=in;
+            int increase=in;
+            for(int sym=0; sym<symbols.size(); sym++)
+            {
+                char currentSymbol = symbols.at(sym);
+                struct DFAelement eNew;
+                eNew.mark=false;
+                for(int j=0; j<e.eq.size(); j++)
+                {
+                    int from = e.eq.at(j);
+                    for(int k =0; k< transitions.size(); k++)
+                    {
+                        struct transition t = transitions.at(k);
+                        if(t.vertex_from == from && t.symbol == currentSymbol){
+                            eNew.eq.push_back(t.vertex_to);
+                        }
+                    }
+                }
+                bool inElements = false;
+                int indexNew=0;
+                for(int elem=0;elem<elements.size();elem++){
+                    struct DFAelement d = elements.at(elem);
+                    if(d.eq.size() == eNew.eq.size()){
+                        int tempSize=0;
+                        for(int temp1=0;temp1<d.eq.size();temp1++){
+                            for(int temp2=0;temp2<eNew.eq.size();temp2++){
+                                if(d.eq.at(temp1) == eNew.eq.at(temp2)){
+                                    tempSize++;
+                                }
+                            }
+                        }
+                        if(tempSize == d.eq.size()){
+                            inElements = true;
+                            indexNew= d.index;
+                            break;
+                        }
+                    }
+                }
+                if(!inElements){
+                    increase++;
+                    eNew.index=increase;
+                   elements.push_back(eNew);
+                }
+                else{
+                    eNew.index=indexNew;
+                }
+                struct transition tran;
+                tran.symbol=currentSymbol;
+                tran.vertex_from=in;
+                tran.vertex_to=eNew.index;
+                newTran.push_back(tran);
+            }
+        }
+        in++;
     }
 
 }
