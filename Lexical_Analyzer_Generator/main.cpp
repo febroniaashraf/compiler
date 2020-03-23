@@ -96,23 +96,22 @@ map<char, FA> punctuations;
 FA concatenation (FA a, FA b)
 {
     FA result;
-    result.set_vertices((a.get_no_vertices() + b.get_no_vertices()) - 1);
+    result.set_vertices((a.get_no_vertices() + b.get_no_vertices()));
     result.set_startState(a.get_startState());
-    result.set_finalState(b.get_finalState());
+    result.set_finalState(a.get_no_vertices() + b.get_no_vertices()-1);
     for (int i = 0 ; i < a.get_tran().size(); i++)
     {
         struct transtion tran;
         tran = a.get_tran().at(i);
         result.set_transtions(tran.vertex_from,tran.vertex_to,tran.symbol);
     }
-    result.set_transtions(a.get_finalState(),b.get_startState(),'L');
+    result.set_transtions(a.get_finalState(),b.get_startState()+a.get_no_vertices(),'L');
     for (int i = 0 ; i < b.get_tran().size(); i++)
     {
         struct transtion tran;
-        tran = a.get_tran().at(i);
-        result.set_transtions(tran.vertex_from,tran.vertex_to,tran.symbol);
+        tran = b.get_tran().at(i);
+        result.set_transtions(tran.vertex_from+a.get_no_vertices(),tran.vertex_to+a.get_no_vertices(),tran.symbol);
     }
-
     return result;
 
 }
@@ -175,17 +174,25 @@ FA Union (FA a, FA b)
         result.set_transtions(tran.vertex_from+a.get_no_vertices()+1,tran.vertex_to+a.get_no_vertices()+1,tran.symbol);
     }
     result.set_transtions(b.get_finalState()+a.get_no_vertices()+1,result.get_finalState(),'L');
+    return result;
 }
 
 void keyWords(string input)
 {
-    input.erase(std::remove(input.begin(), input.end(), '{'), input.end());
-    input.erase(std::remove(input.begin(), input.end(), '}'), input.end());
+    if(input[0]=='{'){
+        input.erase(input.begin() +0);
+    }
+    if(input[input.length()-1]=='}'){
+        input.erase(input.begin() +input.length()-1);
+    }
     istringstream ss(input);
     do
     {
         string word;
         ss >> word;
+        if(word == ""){
+            continue;
+        }
         FA key;
         key.set_vertices(word.length()+1);
         key.set_startState(0);
@@ -201,8 +208,12 @@ void keyWords(string input)
 
 void punc(string input)
 {
-    input.erase(std::remove(input.begin(), input.end(), '['), input.end());
-    input.erase(std::remove(input.begin(), input.end(), ']'), input.end());
+    if(input[0]=='['){
+        input.erase(input.begin() +0);
+    }
+    if(input[input.length()-1]==']'){
+        input.erase(input.begin() +input.length()-1);
+    }
     for(int i=0; i<input.length(); i++)
     {
         FA key;
