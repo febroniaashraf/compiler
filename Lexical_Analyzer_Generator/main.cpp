@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -522,7 +523,7 @@ void regular_ex(string name, string expression)
         }
     }
 }
-void regular_de(string input)
+void regular_de(string input, string expression)
 {
     bool flag = false;
     string name = "";
@@ -542,6 +543,42 @@ void regular_de(string input)
         }
     }
 }
+void read_file (const char* input_file){
+     fstream newfile;
+     newfile.open(input_file,ios::in); //open a file to perform read operation using file object
+   if (newfile.is_open()){   //checking whether the file is open
+      string line;
+      while(getline(newfile, line)){ //read data from file object and put it into string.
+         string word = "";
+         for (std::string::size_type i = 0; i < line.size(); i++)
+        {
+            if (line[i] == '{'){ // keywords
+                line.erase(line.begin() + 0);
+                line.erase(line.end() - 1);
+                keyWords(line);
+                break;
+            }else if (line[i]  == '['){ // punctuation
+                line.erase(line.begin() + 0);
+                line.erase(line.end() - 1);
+                punc(line);
+                break;
+            }else if (line[i] == ':'){ // regular expression
+                line.erase(line.begin() + 0 , line.begin() + i + 1);
+                regular_ex(word,line);
+                break;
+            }else if (line[i] == '='){ // regular definition
+                line.erase(line.begin() + 0 , line.begin() + i + 1);
+                regular_de(word, line);
+                break;
+            }else{ //read the label of a regular expression or a regular definition
+                    word = word + line[i];
+            }
+        }
+      }
+      newfile.close(); //close the file object.
+   }
+ }
+
 int main()
 {
     FA result;
