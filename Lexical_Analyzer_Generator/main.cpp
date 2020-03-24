@@ -42,6 +42,9 @@ public:
         }
     }
 
+    vector<int> get_vertices (){
+      return vertices;
+    }
     void set_final_to_DFA(int state)
     {
         final_To_DFA.push_back(state);
@@ -611,6 +614,115 @@ void read_file (const char* input_file){
       }
       newfile.close(); //close the file object.
    }
+ }
+vector<int> getNonFinalStates(vector<int> first, vector<int> second){
+  std::vector<int> v(first.size()+second.size());
+  std::vector<int>::iterator it;
+
+  std::sort (first.begin(),first.end());
+  std::sort (second.begin(),second.end());
+
+  it=std::set_difference (first.begin(), first.end(), second.begin(), second.end(), v.begin());
+  v.resize(it-v.begin());
+}
+vector<int> getInputs(vector<tranistion> transitions){
+    vector<char> symbols;
+    for(int i=0; i<transitions.size(); i++)
+    {
+        char s = transitions.at(i).symbol;
+        bool contain= false;
+        for(int j=0; j<symbols.size(); j++)
+        {
+            if(symbols.at(j) == s)
+            {
+                contain=true;
+                break;
+            }
+        }
+        if(!contain)
+        {
+            symbols.push_back(s);
+        }
+    }
+    return symbols;
+}
+string findNextStats (int state, vector<tranistion> transitions, vector<int> inputs ,map<int, int> keyOfStates){
+    string result = "";
+    for(int j=0; j<inputs.size(); j++){
+      for(int i=0; i<transitions.size(); i++){
+        if(transitions.at(i).vertex_from == state && transitions.at(i).symbol == inputs.at(j)){
+              result.push_back(keyOfStates.find(transitions.at(i).vertex_to));
+        }
+        }
+    }
+    return result;
+}
+void addVectorToMap(int value,vector v, map<int, int> keyOfStates){
+     for(int i=0; i<v.size(); i++){
+        keyOfStates[v.at(i)] = value;
+     }
+     return keyOfStates;
+}
+void updateMapValues(int value,vector v, map<int, int> keyOfStates){
+     for(int i=0; i<v.size(); i++){
+        keyOfStates.insert(std::pair<int,int>(v.at(i),value));
+     }
+     return keyOfStates;
+}
+ map<int, vector<int>> minimizaion (FA DFA){
+    int numberOfSets = 2;
+    int counter = 0;
+    int whichPartition = 1;
+
+    map<string,vector<int>) pre_result;
+    map<int, int> keyOfStates;
+    map<int,vector<int>> partitions;
+
+    vector<tranistion> transitions = DFA.get_tran();
+    vector<int> finalStates = DFA.get_final_to_DFA();
+    vector<int> vertices = DFA.vertices();
+    vector<int> NonFinalStates = getNonFinalStates(vertices,finalStates);
+    vector<int> inputs = getInputs(transitions);
+    vector<int> currntVector = finalStates;
+
+
+    addVectorToMap(1,finalStates,keyOfStates);
+    addVectorToMap(2,NonFinalStates,keyOfStates);
+
+    partitions.insert(pair<int, vector<int>(1,finalStates));
+    partitions.insert(pair<int, vector<int>(2,NonFinalStates));
+
+    while(currntVector.size() > counter){
+    string nextStates = findNextStats (currntVector.at(counter), transitions, inputs , keyOfStates);
+    if (pre_result.find(nextStates) != pre_result.end()) {
+        pre_result[nextStates].push_back(currntVector.at(counter));
+    }else{
+        vector<int> v;
+        v.push_back(currntVector.at(counter));
+        pre_result[nextStates].insert(pair<string,vector<int>>(nextStates,v);
+    }
+    counter++;
+    if(counter == currntVector.size()){
+        if(pre_result.size() != 1) {
+           partitions.erase(whichPartition);
+           for (std::map<string,vector<int>>::iterator it=pre_result.begin(); it!=pre_result.end(); ++it){
+             numberOfSets++
+             partitions.insert(pair<int, vector<int>(numberOfSets,it->second));
+             updateMapValues(numberOfSets,it->second,keyOfStates);
+           }
+
+        }
+        whichPartition++;
+        if (partitions.find(whichPartition) != partitions.end()){
+            currntVector = partitions[whichPartition];
+            counter = 0;
+            pre_result.clear();
+        } else {
+          break
+        }
+    }
+    }
+    return partitions;
  }
 
 int main()
