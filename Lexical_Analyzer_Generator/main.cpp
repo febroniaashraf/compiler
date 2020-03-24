@@ -270,13 +270,9 @@ FA NFAtoDFA (FA a)
     int size_elem =0;
     while(size_elem < elem.eq.size())  //get S0 closure
     {
-<<<<<<< HEAD
-        for(int j=0; j<elem.eq.size(); j++)
-=======
         int j = elem.eq.at(size_elem);
         for(int i =0; i< transitions.size(); i++)
->>>>>>> 86f2dc4238f6e5f1d4cfef019ff80a4c8d1b20e4
-        {
+            {
             struct transitions t = transitions.at(i);
             if(t.vertex_from == j && t.symbol == 'L')
             {
