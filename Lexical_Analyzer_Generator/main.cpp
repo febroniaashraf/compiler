@@ -188,6 +188,32 @@ FA Union (FA a, FA b)
     return result;
 }
 
+FA range (FA a, FA b){
+    char first = a.transitions[0].symbol;
+    char last = b.transitions[0].symbol;
+    vector<char> v_char;
+    vector<FA> v_fa;
+    for (char i = first ; i <= last ; i++){
+        v_char.push_back(i);
+    }
+
+    for(int i=0; i< v_char.size(); i++)
+    {
+            FA sym;
+            sym.set_vertices(2);
+            sym.set_startState(0);
+            sym.set_finalState(1);
+            sym.set_transtions(sym.get_startState(),sym.get_finalState(),v_char[i]);
+            v_fa.push_back(sym);
+    }
+    FA result;
+    result = v_fa[0];
+    for (int i = 1 ; i < v_fa.size() ; i++){
+        result = Union (result, v_fa[i]);
+    }
+    return result;
+}
+
 void keyWords(string input)
 {
     istringstream ss(input);
@@ -353,7 +379,7 @@ FA NFAtoDFA (FA a)
     return DFA;
 }
 
-void regular_ex(string name, string expression)
+void expression_to_NFA(string name, string expression , string type)
 {
     stack<FA> finite_automata;// stores the NFA for each expression that is read, at the end it will hold the NFA for Re EX el kber :)
     stack<char> operators; // to store operators that must wait until read the next word or expression like union and concatenation
@@ -432,6 +458,10 @@ void regular_ex(string name, string expression)
             { // union so we need to wait until we get the next word or expression so we add it to stack
                 operators.push(expression[i]);
             }
+            else if(expression[i]=='-')
+            { // range **** new **** so we need to wait until we get the next word or expression so we add it to stack
+                operators.push(expression[i]);
+            }
             else if(expression[i]=='(')
             { // same for union we must wait
                 flag = true;
@@ -461,16 +491,22 @@ void regular_ex(string name, string expression)
                         operators.pop(); // to pop #
                         operators.pop(); // to pop (
                     }
+                    else if(operators.top()=='-')
+                    {
+                        FA one = finite_automata.top();
+                        finite_automata.pop();
+                        FA two = finite_automata.top();
+                        finite_automata.pop();
+                        finite_automata.push(range(one, two));
+                        operators.pop(); // to pop -
+                        operators.pop(); // to pop (
+                    }
+
                 }
                 else {
                     operators.pop(); // pop (
                 }
                 flag = false; // as the ( is removed from stack
-            }
-            else if(expression[i]=='-')
-            {
-                // mosh 3rfa htkon mwgoda asln hna fe el RE EX wla la
-
             }
         }
         if((finite_automata.size()-operators.size()==1) && !flag){ // lw 3nde fe el stack finite (NFA1,NFA2) wa el operators (|) wa mknsh feh ( kda el mfrod a3ml union l NFA1 wa NFA2 y3ne lma al2e stack finite > stack operators b 1
@@ -519,30 +555,17 @@ void regular_ex(string name, string expression)
         }
         if(i==expression.length()-1) // here we are finish so we add the NFA in stack in Re EX map
         {
-            regular_Expression.insert(pair<string, FA>(name,finite_automata.top()));
+            if (type == "re")
+            {
+                regular_Expression.insert(pair<string, FA>(name,finite_automata.top()));
+            }else if  (type == "def")
+            {
+                regular_Definitions.insert(pair<string, FA>(name,finite_automata.top()));
+            }
         }
     }
 }
-void regular_de(string input, string expression)
-{
-    bool flag = false;
-    string name = "";
-    for (int i=0; i<input.length(); i++)
-    {
-        if(input[i]==' ')
-        {
-            continue;
-        }
-        if(input[i]=='=')
-        {
-            flag = true;
-        }
-        if (!flag)
-        {
-            name+= input[i];
-        }
-    }
-}
+
 void read_file (const char* input_file){
      fstream newfile;
      newfile.open(input_file,ios::in); //open a file to perform read operation using file object
@@ -564,11 +587,11 @@ void read_file (const char* input_file){
                 break;
             }else if (line[i] == ':'){ // regular expression
                 line.erase(line.begin() + 0 , line.begin() + i + 1);
-                regular_ex(word,line);
+                expression_to_NFA(word, line, "re");
                 break;
             }else if (line[i] == '='){ // regular definition
                 line.erase(line.begin() + 0 , line.begin() + i + 1);
-                regular_de(word, line);
+                expression_to_NFA(word, line, "def");
                 break;
             }else{ //read the label of a regular expression or a regular definition
                     word = word + line[i];
