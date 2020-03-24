@@ -234,6 +234,7 @@ void punc(string input)
 FA NFAtoDFA (FA a)
 {
     FA DFA;
+
     vector<tranistion> transitions = a.get_tran();
     vector<int> finalStates = a.get_final_to_DFA();
     vector<char> symbols;
