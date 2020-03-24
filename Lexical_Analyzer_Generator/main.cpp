@@ -16,6 +16,7 @@ struct DFAelement
     vector<int> eq;
     bool mark;
 };
+int dummyState;
 class FA
 {
 public:
@@ -335,6 +336,9 @@ FA NFAtoDFA (FA a)
                     increase++;
                     eNew.index=increase;
                     elements.push_back(eNew);
+                    if(eNew.eq.size()==0){
+                        dummyState = increase;
+                    }
                     bool fin = false; //check if this state is a final state or not
                     for(int finalS=0;finalS<eNew.eq.size();finalS++){
                         for(int final2=0;final2<finalStates.size();final2++){
