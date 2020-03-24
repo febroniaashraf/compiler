@@ -3,7 +3,7 @@
 
 using namespace std;
 
-struct transtion
+struct transition
 {
     int vertex_from;
     int vertex_to;
@@ -22,7 +22,7 @@ public:
     int final_state;
     int start_state;
     vector<int> final_To_DFA;
-    vector<transtion> transitions;
+    vector<transition> transitions;
     vector<int> vertices;
 
     FA ()
@@ -50,14 +50,14 @@ public:
     }
     void set_transtions(int from, int to, char tran_symbol)
     {
-        struct transtion tran;
+        struct transition tran;
         tran.vertex_from = from;
         tran.vertex_to = to;
         tran.symbol = tran_symbol;
         transitions.push_back(tran);
     }
 
-    vector<transtion> get_tran()
+    vector<transition> get_tran()
     {
         return transitions;
     }
@@ -86,6 +86,16 @@ public:
     {
         return final_state;
     }
+    void display()
+    {
+        struct transition new_trans;
+        for(int i = 0; i < transitions.size(); i++)
+        {
+            new_trans = transitions.at(i);
+            cout<<"q"<<new_trans.vertex_from<<" --> q"<<new_trans.vertex_to<<" : Symbol - "<<new_trans.symbol<<endl;
+        }
+        cout<<"\nThe final state is q"<<get_finalState()<<endl;
+    }
 };
 
 map<string, FA> regular_Definitions;
@@ -101,14 +111,14 @@ FA concatenation (FA a, FA b)
     result.set_finalState(a.get_no_vertices() + b.get_no_vertices()-1);
     for (int i = 0 ; i < a.get_tran().size(); i++)
     {
-        struct transtion tran;
+        struct transition tran;
         tran = a.get_tran().at(i);
         result.set_transtions(tran.vertex_from,tran.vertex_to,tran.symbol);
     }
     result.set_transtions(a.get_finalState(),b.get_startState()+a.get_no_vertices(),'L');
     for (int i = 0 ; i < b.get_tran().size(); i++)
     {
-        struct transtion tran;
+        struct transition tran;
         tran = b.get_tran().at(i);
         result.set_transtions(tran.vertex_from+a.get_no_vertices(),tran.vertex_to+a.get_no_vertices(),tran.symbol);
     }
@@ -126,7 +136,7 @@ FA kleene(FA a)
     result.set_transtions(result.get_startState(), result.get_finalState(), 'L');
     for (int i = 0 ; i < a.get_tran().size(); i++)
     {
-        struct transtion tran;
+        struct transition tran;
         tran = a.get_tran().at(i);
         result.set_transtions(tran.vertex_from+1,tran.vertex_to+1,tran.symbol);
     }
@@ -143,7 +153,7 @@ FA positive_closure(FA a)
     result.set_transtions(result.get_startState(),a.get_startState()+1,'L');
     for(int i=0; i<a.get_tran().size(); i++)
     {
-        struct transtion tran;
+        struct transition tran;
         tran = a.get_tran().at(i);
         result.set_transtions(tran.vertex_from+1,tran.vertex_to+1,tran.symbol);
     }
@@ -161,7 +171,7 @@ FA Union (FA a, FA b)
     result.set_transtions(result.get_startState(),a.get_startState()+1,'L');
     for(int i=0; i<a.get_tran().size(); i++)
     {
-        struct transtion tran;
+        struct transition tran;
         tran = a.get_tran().at(i);
         result.set_transtions(tran.vertex_from+1,tran.vertex_to+1,tran.symbol);
     }
@@ -169,7 +179,7 @@ FA Union (FA a, FA b)
     result.set_transtions(result.get_startState(),b.get_startState()+a.get_no_vertices()+1,'L');
     for(int i=0; i<b.get_tran().size(); i++)
     {
-        struct transtion tran;
+        struct transition tran;
         tran = b.get_tran().at(i);
         result.set_transtions(tran.vertex_from+a.get_no_vertices()+1,tran.vertex_to+a.get_no_vertices()+1,tran.symbol);
     }
@@ -179,18 +189,13 @@ FA Union (FA a, FA b)
 
 void keyWords(string input)
 {
-    if(input[0]=='{'){
-        input.erase(input.begin() +0);
-    }
-    if(input[input.length()-1]=='}'){
-        input.erase(input.begin() +input.length()-1);
-    }
     istringstream ss(input);
     do
     {
         string word;
         ss >> word;
-        if(word == ""){
+        if(word == "")
+        {
             continue;
         }
         FA key;
@@ -208,12 +213,6 @@ void keyWords(string input)
 
 void punc(string input)
 {
-    if(input[0]=='['){
-        input.erase(input.begin() +0);
-    }
-    if(input[input.length()-1]==']'){
-        input.erase(input.begin() +input.length()-1);
-    }
     for(int i=0; i<input.length(); i++)
     {
         FA key;
@@ -234,7 +233,7 @@ void punc(string input)
 FA NFAtoDFA (FA a)
 {
     FA DFA;
-    vector<transtion> transitions = a.get_tran();
+    vector<transition> transitions = a.get_tran();
     vector<int> finalStates = a.get_final_to_DFA();
     vector<DFAelement> elements;
     struct DFAelement elem;
@@ -243,7 +242,7 @@ FA NFAtoDFA (FA a)
     elem.eq.push_back(a.get_startState());
     for(int i =0; i< transitions.size(); i++)
     {
-        for(j=0; j<elem.eq.size(); j++)
+        for(int j=0; j<elem.eq.size(); j++)
         {
             if(transitions[i].vertex_from == elem.eq[j] && transitions[i].symbol == 'L')
             {
@@ -253,14 +252,210 @@ FA NFAtoDFA (FA a)
     }
 
 }
+
+void regular_ex(string name, string expression)
+{
+    stack<FA> finite_automata;// stores the NFA for each expression that is read, at the end it will hold the NFA for Re EX el kber :)
+    stack<char> operators; // to store operators that must wait until read the next word or expression like union and concatenation
+    string symbols=""; // stores in it the word like letter or digit to check if it is in RE DE map
+    bool flag = false; // used to check if we get symbol (
+    for (int i=0; i<expression.length(); i++)
+    {
+        if(expression[i]=='\\') // for Any reserved symbol like \+ as we will take + as input symbol not as positive closure
+        {
+            symbols+= expression[i+1];
+            i++;
+            continue;
+        }
+        if((expression[i]==' '&&expression[i-1]!='*' && expression[i-1]!='+') || expression[i+1]=='*' || expression[i+1]=='+')
+        { // if we have digit then space or digit+ or digit* so we need to make NFA for digit but if we have digit+ then space so we have already calculate NFA
+            if(expression[i]==' ' && expression[i+1]!='|' && expression[i+1]!='-')
+            {
+                operators.push('#'); // for concatenation symbol
+            }
+            if((expression[i+1]=='*' || expression[i]=='+')&&expression[i]!=')')
+            {
+                symbols+= expression[i+1]; // if we have (letter|digit)* so we don't need to add ) to string symbol that hold word digit
+            }
+            map<string,FA>::iterator it = regular_Definitions.find(symbols); // check if symbol exists in Re DE map
+            if(it != regular_Definitions.end())
+            {
+                finite_automata.push(it->second);
+            }
+            else // if not exist so we need to calculate NFA for it
+            {
+                FA key;
+                key.set_vertices(symbols.length()+1);
+                key.set_startState(0);
+                key.set_finalState(symbols.length());
+                for(int i=0; i<symbols.length(); i++)
+                {
+                    key.set_transtions(i,i+1,symbols[i]);
+                }
+                finite_automata.push(key);
+            }
+            symbols = "";
+            continue;
+        }
+        else if(expression[i]!='|' && expression[i]!='+'&& expression[i]!='*'&& expression[i]!='('&& expression[i]!=')'&& expression[i]!='-')
+        { // here we hold a character so we add it to symbols
+            symbols+= expression[i];
+            if(i==expression.length()-1){ // if we are in the end of the expression so we need to check NFA for the string that we hold
+                FA key;
+                key.set_vertices(symbols.length()+1);
+                key.set_startState(0);
+                key.set_finalState(symbols.length());
+                for(int i=0; i<symbols.length(); i++)
+                {
+                    key.set_transtions(i,i+1,symbols[i]);
+                }
+                finite_automata.push(key);
+            }
+        }
+        else // here we have a special symbol of operators
+        {
+            if(expression[i]=='*')
+            { // kleene closure
+                FA re = finite_automata.top();
+                finite_automata.pop();
+                re = kleene(re);
+                finite_automata.push(re);
+            }
+            else if(expression[i]=='+')
+            { // positive closure
+                FA re = finite_automata.top();
+                finite_automata.pop();
+                re = positive_closure(re);
+                finite_automata.push(re);
+            }
+            else if(expression[i]=='|')
+            { // union so we need to wait until we get the next word or expression so we add it to stack
+                operators.push(expression[i]);
+            }
+            else if(expression[i]=='(')
+            { // same for union we must wait
+                flag = true;
+                operators.push(expression[i]);
+            }
+            else if(expression[i]==')')
+            { // here we need to take action about what operator was in stack union or concatenation
+                if(operators.top()!='(')
+                {
+                    if(operators.top()=='|')
+                    {
+                        FA one = finite_automata.top();
+                        finite_automata.pop();
+                        FA two = finite_automata.top();
+                        finite_automata.pop();
+                        finite_automata.push(Union(one,two));
+                        operators.pop();//to pop |
+                        operators.pop(); //to pop (
+                    }
+                    else if(operators.top()=='#')
+                    {
+                        FA one = finite_automata.top();
+                        finite_automata.pop();
+                        FA two = finite_automata.top();
+                        finite_automata.pop();
+                        finite_automata.push(concatenation(one,two));
+                        operators.pop(); // to pop #
+                        operators.pop(); // to pop (
+                    }
+                }
+                else {
+                    operators.pop(); // pop (
+                }
+                flag = false; // as the ( is removed from stack
+            }
+            else if(expression[i]=='-')
+            {
+                // mosh 3rfa htkon mwgoda asln hna fe el RE EX wla la
+
+            }
+        }
+        if((finite_automata.size()-operators.size()==1) && !flag){ // lw 3nde fe el stack finite (NFA1,NFA2) wa el operators (|) wa mknsh feh ( kda el mfrod a3ml union l NFA1 wa NFA2 y3ne lma al2e stack finite > stack operators b 1
+            if(operators.top()=='|')
+                    {
+                        FA one = finite_automata.top();
+                        finite_automata.pop();
+                        FA two = finite_automata.top();
+                        finite_automata.pop();
+                        finite_automata.push(Union(one,two));
+                        operators.pop();
+                        operators.pop();
+                    }
+                    else if(operators.top()=='#')
+                    {
+                        FA one = finite_automata.top();
+                        finite_automata.pop();
+                        FA two = finite_automata.top();
+                        finite_automata.pop();
+                        finite_automata.push(concatenation(one,two));
+                        operators.pop();
+                        operators.pop();
+                    }
+        }
+        else if((finite_automata.size()==operators.size()) && flag){ // nfs el klam fe ely fo2 bs lma ykon 3nde ( kda el stack finite = stack operators
+             if(operators.top()=='|')
+                    {
+                        FA one = finite_automata.top();
+                        finite_automata.pop();
+                        FA two = finite_automata.top();
+                        finite_automata.pop();
+                        finite_automata.push(Union(one,two));
+                        operators.pop();
+                        operators.pop();
+                    }
+                    else if(operators.top()=='#')
+                    {
+                        FA one = finite_automata.top();
+                        finite_automata.pop();
+                        FA two = finite_automata.top();
+                        finite_automata.pop();
+                        finite_automata.push(concatenation(one,two));
+                        operators.pop();
+                        operators.pop();
+                    }
+        }
+        if(i==expression.length()-1) // here we are finish so we add the NFA in stack in Re EX map
+        {
+            regular_Expression.insert(pair<string, FA>(name,finite_automata.top()));
+        }
+    }
+}
+void regular_de(string input)
+{
+    bool flag = false;
+    string name = "";
+    for (int i=0; i<input.length(); i++)
+    {
+        if(input[i]==' ')
+        {
+            continue;
+        }
+        if(input[i]=='=')
+        {
+            flag = true;
+        }
+        if (!flag)
+        {
+            name+= input[i];
+        }
+    }
+}
 int main()
 {
     FA result;
-    result.set_finalState(0);
-    result.set_finalState(3);
-    string word = "{geeks for";
-    word.erase(std::remove(word.begin(), word.end(), '{'), word.end());
-    cout << result.get_startState() << result.get_finalState() << word << endl;
-    cout << "Hello world!" << endl;
+    map<char, FA>::iterator itr2;
+    map<string, FA>::iterator itr;
+    string word = "{if for}";
+    string word2 = "[, ;]";
+    keyWords(word);
+    for (itr = key_words.begin(); itr != key_words.end(); ++itr)
+    {
+        cout << '\t' << itr->first << endl;
+        result = positive_closure(itr->second);
+        result.display();
+    }
     return 0;
 }
