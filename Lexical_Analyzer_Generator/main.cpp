@@ -1,6 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <bits/stdc++.h>
+#include <string>
+
 
 using namespace std;
 
@@ -266,9 +268,6 @@ FA NFAtoDFA (FA a)
     FA DFA;
 
     vector<transition> transitions = a.get_tran();
-
-
-
     vector<int> finalStates = a.get_final_to_DFA();
     vector<char> symbols;
     DFA.set_startState(0);
@@ -621,7 +620,7 @@ vector<int> getNonFinalStates(vector<int> first, vector<int> second){
   it=std::set_difference (first.begin(), first.end(), second.begin(), second.end(), v.begin());
   v.resize(it-v.begin());
 }
-vector<int> getInputs(vector<transition> transitions){
+vector<char> getInputs(vector<transition> transitions){
     vector<char> symbols;
     for(int i=0; i<transitions.size(); i++)
     {
@@ -642,51 +641,48 @@ vector<int> getInputs(vector<transition> transitions){
     }
     return symbols;
 }
-string findNextStats (int state, vector<tranistion> transitions, vector<int> inputs ,map<int, int> keyOfStates){
-    string result = "";
+string findNextStats (int state, vector<transition> transitions, vector<char> inputs ,map<int, int> keyOfStates){
+    std::string result = "";
     for(int j=0; j<inputs.size(); j++){
       for(int i=0; i<transitions.size(); i++){
         if(transitions.at(i).vertex_from == state && transitions.at(i).symbol == inputs.at(j)){
-              result.push_back(keyOfStates.find(transitions.at(i).vertex_to));
+              result += keyOfStates[transitions.at(i).vertex_to];
         }
         }
     }
     return result;
 }
-void addVectorToMap(int value,vector v, map<int, int> keyOfStates){
+void addVectorToMap(int value,vector<int> v, map<int, int> keyOfStates){
      for(int i=0; i<v.size(); i++){
         keyOfStates[v.at(i)] = value;
      }
-     return keyOfStates;
 }
-void updateMapValues(int value,vector v, map<int, int> keyOfStates){
+void updateMapValues(int value,vector<int> v, map<int, int> keyOfStates){
      for(int i=0; i<v.size(); i++){
         keyOfStates.insert(std::pair<int,int>(v.at(i),value));
      }
-     return keyOfStates;
 }
- map<int, vector<int>> minimizaion (FA DFA){
+ map<int, vector<int> > minimizaion (FA DFA){
     int numberOfSets = 2;
     int counter = 0;
     int whichPartition = 1;
 
-    map<string,vector<int>) pre_result;
+    map<string,vector<int> > pre_result;
     map<int, int> keyOfStates;
-    map<int,vector<int>> partitions;
-
-    vector<tranistion> transitions = DFA.get_tran();
+    map<int,vector<int> > partitions;
+    vector<transition> transitions = DFA.get_tran();
     vector<int> finalStates = DFA.get_final_to_DFA();
-    vector<int> vertices = DFA.vertices();
+    vector<int> vertices = DFA.get_vertices();
     vector<int> NonFinalStates = getNonFinalStates(vertices,finalStates);
-    vector<int> inputs = getInputs(transitions);
+    vector<char> inputs = getInputs(transitions);
     vector<int> currntVector = finalStates;
 
 
     addVectorToMap(1,finalStates,keyOfStates);
     addVectorToMap(2,NonFinalStates,keyOfStates);
 
-    partitions.insert(pair<int, vector<int>(1,finalStates));
-    partitions.insert(pair<int, vector<int>(2,NonFinalStates));
+    partitions.insert(pair<int, vector<int> >(1,finalStates));
+    partitions.insert(pair<int, vector<int> >(2,NonFinalStates));
 
     while(currntVector.size() > counter){
     string nextStates = findNextStats (currntVector.at(counter), transitions, inputs , keyOfStates);
@@ -695,15 +691,15 @@ void updateMapValues(int value,vector v, map<int, int> keyOfStates){
     }else{
         vector<int> v;
         v.push_back(currntVector.at(counter));
-        pre_result[nextStates].insert(pair<string,vector<int>>(nextStates,v);
+        pre_result.insert(pair<string,vector<int> >(nextStates,v));
     }
     counter++;
     if(counter == currntVector.size()){
         if(pre_result.size() != 1) {
            partitions.erase(whichPartition);
-           for (std::map<string,vector<int>>::iterator it=pre_result.begin(); it!=pre_result.end(); ++it){
-             numberOfSets++
-             partitions.insert(pair<int, vector<int>(numberOfSets,it->second));
+           for (std::map<string,vector<int> >::iterator it = pre_result.begin(); it!=pre_result.end(); ++it){
+             numberOfSets++;
+             partitions.insert(pair<int, vector<int> >(numberOfSets,it->second));
              updateMapValues(numberOfSets,it->second,keyOfStates);
            }
 
@@ -714,7 +710,7 @@ void updateMapValues(int value,vector v, map<int, int> keyOfStates){
             counter = 0;
             pre_result.clear();
         } else {
-          break
+          break;
         }
     }
     }
