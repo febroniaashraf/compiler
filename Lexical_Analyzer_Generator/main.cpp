@@ -233,24 +233,130 @@ void punc(string input)
 FA NFAtoDFA (FA a)
 {
     FA DFA;
+<<<<<<< HEAD
     vector<transition> transitions = a.get_tran();
+=======
+    vector<tranistion> transitions = a.get_tran();
+>>>>>>> 86f2dc4238f6e5f1d4cfef019ff80a4c8d1b20e4
     vector<int> finalStates = a.get_final_to_DFA();
+    vector<char> symbols;
+    DFA.set_startState(0);
+    for(int i=0; i<transitions.size(); i++) //GET ALL SYMBOLS IN NFA
+    {
+        char s = transitions.at(i).symbol;
+        bool contain= false;
+        for(int j=0; j<symbols.size(); j++)
+        {
+            if(symbols.at(j) == s)
+            {
+                contain=true;
+                break;
+            }
+        }
+        if(!contain)
+        {
+            symbols.push_back(s);
+        }
+    }
     vector<DFAelement> elements;
     struct DFAelement elem;
     elem.index =0;
     elem.mark= false;
     elem.eq.push_back(a.get_startState());
-    for(int i =0; i< transitions.size(); i++)
+    int size_elem =0;
+    while(size_elem < elem.eq.size())  //get S0 closure
     {
+<<<<<<< HEAD
         for(int j=0; j<elem.eq.size(); j++)
+=======
+        int j = elem.eq.at(size_elem);
+        for(int i =0; i< transitions.size(); i++)
+>>>>>>> 86f2dc4238f6e5f1d4cfef019ff80a4c8d1b20e4
         {
-            if(transitions[i].vertex_from == elem.eq[j] && transitions[i].symbol == 'L')
+            struct transitions t = transitions.at(i);
+            if(t.vertex_from == j && t.symbol == 'L')
             {
-                elem.eq.push_back(transitions[i].vertex_to);
+                elem.eq.push_back(t.vertex_to);
             }
         }
+        size_elem ++;
     }
+    elements.push_back(elem);
 
+    int in=0;
+    int increase=0;
+    while(in<elements.size()) //CALCULATE THE NEW STATES
+    {
+        struct DFAelement e = elements.at(in);
+
+        if(!e.mark) //CHECK IF WE TAKE IT BEFORE OR NOT
+        {
+            e.mark= true;
+            e.index=in;
+
+            for(int sym=0; sym<symbols.size(); sym++) //GET THE NEXT STATE FOR EVERY SYMBOL
+            {
+                char currentSymbol = symbols.at(sym);
+                struct DFAelement eNew;
+                eNew.mark=false;
+                for(int j=0; j<e.eq.size(); j++)
+                {
+                    int from = e.eq.at(j);
+                    for(int k =0; k< transitions.size(); k++)
+                    {
+                        struct transition t = transitions.at(k);
+                        if(t.vertex_from == from && t.symbol == currentSymbol){
+                            eNew.eq.push_back(t.vertex_to);
+                        }
+                    }
+                }
+                bool inElements = false;
+                int indexNew=0;
+                for(int elem=0;elem<elements.size();elem++){ //CHECK IF THIS STATE ADDED BEFORE TO ELEMENTS OR NOT
+                    struct DFAelement d = elements.at(elem);
+                    if(d.eq.size() == eNew.eq.size()){
+                        int tempSize=0;
+                        for(int temp1=0;temp1<d.eq.size();temp1++){
+                            for(int temp2=0;temp2<eNew.eq.size();temp2++){
+                                if(d.eq.at(temp1) == eNew.eq.at(temp2)){
+                                    tempSize++;
+                                }
+                            }
+                        }
+                        if(tempSize == d.eq.size()){
+                            inElements = true;
+                            indexNew= d.index;
+                            break;
+                        }
+                    }
+                }
+                if(!inElements){ //if it is a new state then push it to elements
+                    increase++;
+                    eNew.index=increase;
+                    elements.push_back(eNew);
+                    bool fin = false; //check if this state is a final state or not
+                    for(int finalS=0;finalS<eNew.eq.size();finalS++){
+                        for(int final2=0;final2<finalStates.size();final2++){
+                            if(eNew.eq.at(finalS) == finalStates.at(final2)){
+                                fin = true;
+                                break;
+                            }
+                        }
+                    }
+                    if(fin){
+                       DFA.set_final_to_DFA(eNew.index);
+                    }
+                }
+                else{
+                    eNew.index=indexNew;
+                }
+                DFA.set_transtions(in,eNew.index,currentSymbol);
+            }
+        }
+        in++;
+    }
+    DFA.set_vertices(elements.size());
+    return DFA;
 }
 
 void regular_ex(string name, string expression)
