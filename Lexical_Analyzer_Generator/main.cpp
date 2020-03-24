@@ -234,8 +234,15 @@ void punc(string input)
 FA NFAtoDFA (FA a)
 {
     FA DFA;
-    vector<transition> transitions = a.get_tran();
+<<<<<<< HEAD
 
+=======
+<<<<<<< HEAD
+    vector<transition> transitions = a.get_tran();
+=======
+>>>>>>> 02961b7ccaa297e80d2247ab89f71a6a5dab8a7d
+    vector<tranistion> transitions = a.get_tran();
+>>>>>>> 86f2dc4238f6e5f1d4cfef019ff80a4c8d1b20e4
     vector<int> finalStates = a.get_final_to_DFA();
     vector<char> symbols;
     DFA.set_startState(0);
@@ -267,7 +274,7 @@ FA NFAtoDFA (FA a)
         int j = elem.eq.at(size_elem);
         for(int i =0; i< transitions.size(); i++)
             {
-            struct transition t = transitions.at(i);
+            struct transitions t = transitions.at(i);
             if(t.vertex_from == j && t.symbol == 'L')
             {
                 elem.eq.push_back(t.vertex_to);

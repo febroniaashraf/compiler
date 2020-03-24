@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1585013400 source:d:\codes\compilergit\compiler\lexical_analyzer_generator\main.cpp
+1585011956 source:d:\codes\compilergit\compiler\lexical_analyzer_generator\main.cpp
 	<iostream>
 	<bits/stdc++.h>
 
