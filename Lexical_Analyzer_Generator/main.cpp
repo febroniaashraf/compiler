@@ -692,15 +692,9 @@ void updateMapValues(int value,vector<int> v, std::map<int, int> &keyOfStates){
     mySS.push_back("2");
 
     while(currntVector.size() > counter){
-    string nextStates = findNextStats (currntVector[counter], transitions, inputs , keyOfStates);
-    if (!pre_result.empty() && pre_result.count(nextStates) > 0) {
-           pre_result[nextStates].push_back(currntVector.at(counter));
-    }else{
-        vector<int> v;
-        v.push_back(currntVector.at(counter));
-        pre_result.insert(pair<string,vector<int> >(nextStates,v));
-    }
-    counter++;
+      string nextStates = findNextStats (currntVector[counter], transitions, inputs , keyOfStates);
+      pre_result[nextStates].push_back(currntVector.at(counter));
+      counter++;
       if(counter >= currntVector.size()){
         if (pre_result.size() > 1){
           for (std::map<string,vector<int> >::iterator it = pre_result.begin(); it!=pre_result.end(); ++it){
@@ -709,19 +703,14 @@ void updateMapValues(int value,vector<int> v, std::map<int, int> &keyOfStates){
           }
            keyPartition.push_back(whichPartition);
         }
-        pre_result.clear();
         mySS.erase(mySS.begin());
 
         if(!mySS.empty()){
           std::istringstream(mySS.at(0))>> whichPartition;
           currntVector = partitions[whichPartition];
-        } else {
-            if(!keyPartition.empty()){
-               for(int i = 0; i< keyPartition.size();i++)
-                 partitions.erase(keyPartition[i]);
-
-            for(int i = 0; i<keyPartition.size();i++){
-            }
+        } else if(!keyPartition.empty()){
+            for(int i = 0; i< keyPartition.size();i++)
+                partitions.erase(keyPartition[i]);
             keyPartition.clear();
             for (std::map<int,vector<int> >::iterator it = partitions.begin(); it!=partitions.end(); ++it){
                     updateMapValues(it->first,it->second,keyOfStates);
@@ -731,10 +720,10 @@ void updateMapValues(int value,vector<int> v, std::map<int, int> &keyOfStates){
             }
                  whichPartition = partitions.begin()->first;
                  currntVector = partitions[whichPartition];
-            }else {
-               break;
-            }
+        }else {
+            break;
         }
+        pre_result.clear();
         counter = 0;
     }
     }
