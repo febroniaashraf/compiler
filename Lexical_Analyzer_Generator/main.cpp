@@ -2,7 +2,8 @@
 #include <fstream>
 #include <bits/stdc++.h>
 #include <string>
-
+#include <sstream>
+#include<map>
 
 using namespace std;
 
@@ -654,12 +655,7 @@ string findNextStats (int state, vector<transition> transitions, vector<char> in
     }
     return mySS.str();
 }
-void addVectorToMap(int value,vector<int> v, std::map<int, int> &keyOfStates){
-     for(int i=0; i<v.size(); i++){
-        keyOfStates.insert(std::pair<int,int>(v.at(i),value));
-     }
 
-}
 void updateMapValues(int value,vector<int> v, std::map<int, int> &keyOfStates){
      for(int i=0; i<v.size(); i++){
         keyOfStates[v.at(i)] = value;
@@ -673,23 +669,20 @@ void updateMapValues(int value,vector<int> v, std::map<int, int> &keyOfStates){
     map<string,vector<int> > pre_result;
     std::map<int, int> keyOfStates;
     map<int,vector<int> > partitions;
-    vector<int> keyPartition;
     vector<transition> transitions = DFA.get_tran();
     vector<int> finalStates = DFA.get_final_to_DFA();
     vector<int> vertices = DFA.get_vertices();
     vector<int> NonFinalStates = getNonFinalStates(vertices,finalStates);
     vector<char> inputs = getInputs(transitions);
     vector<int> currntVector = NonFinalStates;
-    vector<std::string> mySS;
+    vector<int> mySS;
 
-    addVectorToMap(1,NonFinalStates,keyOfStates);
-    addVectorToMap(2,finalStates,keyOfStates);
-
+    updateMapValues(1,NonFinalStates,keyOfStates);
+    updateMapValues(2,finalStates,keyOfStates);
     partitions.insert(pair<int, vector<int> >(1,NonFinalStates));
     partitions.insert(pair<int, vector<int> >(2,finalStates));
-
-    mySS.push_back("1");
-    mySS.push_back("2");
+    mySS.push_back(1);
+    mySS.push_back(2);
 
     while(currntVector.size() > counter){
       string nextStates = findNextStats (currntVector[counter], transitions, inputs , keyOfStates);
@@ -701,26 +694,25 @@ void updateMapValues(int value,vector<int> v, std::map<int, int> &keyOfStates){
               numberOfSets++;
               partitions.insert(pair<int,vector<int> >(numberOfSets, it->second));
           }
-           keyPartition.push_back(whichPartition);
+           partitions[0].push_back(whichPartition);
         }
         mySS.erase(mySS.begin());
-
         if(!mySS.empty()){
-          std::istringstream(mySS.at(0))>> whichPartition;
+          whichPartition= mySS.at(0);
           currntVector = partitions[whichPartition];
-        } else if(!keyPartition.empty()){
-            for(int i = 0; i< keyPartition.size();i++)
-                partitions.erase(keyPartition[i]);
-            keyPartition.clear();
+        } else if(!partitions[0].empty()){
+            for(int i = 0; i< partitions[0].size();i++)
+                partitions.erase(partitions[0].at(i));
+
+            partitions.erase(0);
             for (std::map<int,vector<int> >::iterator it = partitions.begin(); it!=partitions.end(); ++it){
                     updateMapValues(it->first,it->second,keyOfStates);
-                    stringstream ss;
-                    ss << it->first;
-                    mySS.push_back(ss.str());
+                    mySS.push_back(it->first);
             }
                  whichPartition = partitions.begin()->first;
                  currntVector = partitions[whichPartition];
         }else {
+            partitions.erase(0);
             break;
         }
         pre_result.clear();
@@ -729,20 +721,72 @@ void updateMapValues(int value,vector<int> v, std::map<int, int> &keyOfStates){
     }
     return partitions;
  }
+FA  minimizedTable (map<int, vector<int> > partitions,FA minimizedTable){
+        FA result;
+        std::map<int, int> keyOfStates;
+        vector<transition> transitions = minimizedTable.get_tran();
+        vector<int> finalStates= minimizedTable.get_final_to_DFA();
+        for (std::map<int,vector<int> >::iterator it = partitions.begin(); it!=partitions.end(); ++it){
+                    if(it->second.size() > 1){
+                    vector<int>  v ;
+                    v.insert(v.end(),it->second.begin()+1,it->second.end());
+                    updateMapValues(it->second[0],v,keyOfStates);
+                    }
+        }
+        for(int i=0; i<transitions.size(); i++){
+            if(keyOfStates.count(transitions[i].vertex_from)){
+                transitions.erase(transitions.begin()+ i);
+                i--;
+            }else if(keyOfStates.count(transitions[i].vertex_to)){
+                transitions[i].vertex_to = keyOfStates[transitions[i].vertex_to];
+            }
+        }
+        for(int i=0; i<finalStates.size(); i++){
+         if(!keyOfStates.count(finalStates[i])){
+             result.set_final_to_DFA(finalStates[i]);
+         }
+        }
 
+        result.set_vertices(keyOfStates.size());
+        result.set_tran(transitions);
+        return result;
+}
 int main()
 {
     FA result;
-    map<char, FA>::iterator itr2;
-    map<string, FA>::iterator itr;
-    string word = "{if for}";
-    string word2 = "[, ;]";
-    keyWords(word);
-    for (itr = key_words.begin(); itr != key_words.end(); ++itr)
-    {
-        cout << '\t' << itr->first << endl;
-        result = positive_closure(itr->second);
-        result.display();
-    }
+    result.set_vertices(9);
+    result.set_transtions(0, 1, '0');
+    result.set_transtions(0, 8, '1');
+    result.set_transtions(1, 2, '0');
+    result.set_transtions(1, 3, '1');
+    result.set_transtions(2, 4, '0');
+    result.set_transtions(2, 2, '1');
+    result.set_transtions(3, 5, '0');
+    result.set_transtions(3, 2, '1');
+    result.set_transtions(4, 8, '0');
+    result.set_transtions(4, 6, '1');
+    result.set_transtions(5, 7, '0');
+    result.set_transtions(5, 3, '1');
+    result.set_transtions(6, 5, '0');
+    result.set_transtions(6, 2, '1');
+    result.set_transtions(7, 4, '0');
+    result.set_transtions(7, 3, '1');
+    result.set_transtions(8, 8, '0');
+    result.set_transtions(8, 8, '1');
+    result.set_final_to_DFA(1);
+    result.set_final_to_DFA(3);
+    result.set_final_to_DFA(4);
+    result.set_final_to_DFA(5);
+    result.set_final_to_DFA(6);
+    result.set_final_to_DFA(7);
+
+    map<int,vector<int> > results = minimizaion (result);
+    for (std::map<int,vector<int> >::iterator itr = results.begin(); itr!=results.end(); ++itr){
+            std::cout << itr->first <<" " ;
+              for (std::vector<int> ::iterator it = itr->second.begin(); it!=itr->second.end(); ++it){
+                  std::cout << *it ;
+              }
+                  std::cout << '\n' ;
+        }
     return 0;
 }
