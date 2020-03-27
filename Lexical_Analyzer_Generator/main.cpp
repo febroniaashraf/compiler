@@ -324,6 +324,7 @@ FA NFAtoDFA (FA a)
             for(int sym=0; sym<symbols.size(); sym++) //GET THE NEXT STATE FOR EVERY SYMBOL
             {
                 char currentSymbol = symbols.at(sym);
+                if(currentSymbol != 'L'){
                 struct DFAelement eNew;
                 eNew.mark=false;
                 for(int j=0; j<e.eq.size(); j++)
@@ -334,6 +335,26 @@ FA NFAtoDFA (FA a)
                         struct transition t = transitions.at(k);
                         if(t.vertex_from == from && t.symbol == currentSymbol){
                             eNew.eq.push_back(t.vertex_to);
+                        }
+                    }
+                }
+                for(int j=0; j<eNew.eq.size(); j++)
+                {
+                    int from = eNew.eq.at(j);
+                    bool inE = false;
+                    for(int k =0; k< transitions.size(); k++)
+                    {
+                        struct transition t = transitions.at(k);
+                        if(t.vertex_from == from && t.symbol == 'L'){
+                                for(int s=0;s<eNew.eq.size();s++){
+                                    if(eNew.eq.at(s) == t.vertex_to){
+                                        inE=true;
+                                        break;
+                                    }
+                                }
+                            if(!inE){
+                            eNew.eq.push_back(t.vertex_to);
+                            }
                         }
                     }
                 }
@@ -382,6 +403,7 @@ FA NFAtoDFA (FA a)
                 }
                 DFA.set_transtions(in,eNew.index,currentSymbol);
             }
+        }
         }
         in++;
     }
@@ -748,7 +770,7 @@ FA  minimizedTable (map<int, vector<int> > partitions,FA minimizedTable){
         }
 
         result.set_vertices(keyOfStates.size());
-        result.set_tran(transitions);
+       // result.set_tran(transitions);
         return result;
 }
 int main()
@@ -779,14 +801,45 @@ int main()
     result.set_final_to_DFA(5);
     result.set_final_to_DFA(6);
     result.set_final_to_DFA(7);
+    FA nfa;
+    nfa.set_vertices(11);
+    nfa.set_transtions(0, 1, 'L');
+    nfa.set_transtions(0,7 , 'L');
+    nfa.set_transtions(1,2 , 'L');
+    nfa.set_transtions(1,4 , 'L');
+    nfa.set_transtions(2,3 , 'a');
+    nfa.set_transtions(3,6 , 'L');
+    nfa.set_transtions(4,5, 'b');
+    nfa.set_transtions(5,6 , 'L');
+    nfa.set_transtions(6,7 , 'L');
+    nfa.set_transtions(6,1 , 'L');
+    nfa.set_transtions(7,8 , 'a');
+    nfa.set_transtions(8,9 , 'b');
+    nfa.set_transtions(9,10 , 'b');
+    nfa.set_final_to_DFA(10);
+    FA nfa2;
+    nfa2.set_vertices(13);
+    nfa2.set_transtions(0, 1, 'L');
+    nfa2.set_transtions(0, 4, 'L');
+    nfa2.set_transtions(0, 11, 'L');
+    nfa2.set_transtions(1, 2, 'd');
+    nfa2.set_transtions(2, 3, '0');
 
-    map<int,vector<int> > results = minimizaion (result);
-    for (std::map<int,vector<int> >::iterator itr = results.begin(); itr!=results.end(); ++itr){
-            std::cout << itr->first <<" " ;
-              for (std::vector<int> ::iterator it = itr->second.begin(); it!=itr->second.end(); ++it){
-                  std::cout << *it ;
-              }
-                  std::cout << '\n' ;
-        }
+    FA r = NFAtoDFA(nfa);
+    for(int i=0;i<r.get_tran().size();i++){
+        cout << r.get_tran().at(i).vertex_from <<" "<< r.get_tran().at(i).vertex_to<<" "<< r.get_tran().at(i).symbol<<"\n";
+    }
+    for(int i=0;i<r.get_final_to_DFA().size();i++){
+        cout<<r.get_final_to_DFA().at(i) << "\n";
+    }
+ cout << r.start_state;
+//    map<int,vector<int> > results = minimizaion (result);
+//    for (std::map<int,vector<int> >::iterator itr = results.begin(); itr!=results.end(); ++itr){
+//            std::cout << itr->first <<" " ;
+//              for (std::vector<int> ::iterator it = itr->second.begin(); it!=itr->second.end(); ++it){
+//                  std::cout << *it ;
+//              }
+//                  std::cout << '\n' ;
+//       }
     return 0;
 }
