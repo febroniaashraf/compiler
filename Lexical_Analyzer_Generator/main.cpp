@@ -38,6 +38,9 @@ public:
     {
         output_file.insert(pair<int,string>(f,name));
     }
+    void set_map(map<int,string> map_output){
+        output_file = map_output;
+    }
     map<int,string> get_map()
     {
         return output_file;
@@ -50,7 +53,9 @@ public:
             vertices.push_back(i);
         }
     }
-
+    void set_vertices (vector<int> vertices_element){
+       vertices =  vertices_element;
+    }
     void set_final_to_DFA(int state)
     {
         final_To_DFA.push_back(state);
@@ -85,6 +90,10 @@ public:
     int get_no_vertices()
     {
         return no_vertices;
+    }
+     void set_no_vertices(int vertices_num)
+    {
+         no_vertices = vertices_num;
     }
 
     void set_startState(int state)
@@ -983,6 +992,8 @@ FA  minimizedTable (map<int, vector<int> > partitions,FA DFA)
     std::map<int, int> keyOfStates;
     vector<transition> transitions = DFA.get_tran();
     vector<int> finalStates= DFA.get_final_to_DFA();
+    vector<int> vertices= DFA.get_vertices();
+    map<int,string> output_file = DFA.get_map();
     for (std::map<int,vector<int> >::iterator it = partitions.begin(); it!=partitions.end(); ++it)
     {
         if(it->second.size() > 1)
@@ -1011,8 +1022,19 @@ FA  minimizedTable (map<int, vector<int> > partitions,FA DFA)
             result.set_final_to_DFA(finalStates[i]);
         }
     }
+    for(int i=0; i<vertices.size(); i++)
+    {
+        if(keyOfStates.count(vertices[i]))
+        {
+            output_file.erase(vertices[i]);
+            vertices.erase(vertices.begin()+i);
 
-    result.set_vertices(keyOfStates.size());
+        }
+    }
+    int vertices_num= DFA.vertices.size() - keyOfStates.size();
+    result.set_vertices(vertices);
+    result.set_map(output_file);
+    result.set_no_vertices(vertices_num);
     result.set_tran(transitions);
     return result;
 }
@@ -1142,12 +1164,50 @@ void read_testProgram(const char* input_file, FA mini)
 }
 int main()
 {
-    read_file("input.txt");
-    FA result = language();
-    FA dfa = NFAtoDFA(result);
-    map<int, vector<int> > mini = minimizaion(dfa);
-    FA miniTable = minimizedTable(mini, dfa);
-    read_testProgram("test.txt",miniTable);
-    //result.display();
+    FA result;
+    result.set_vertices(9);
+    result.set_transtions(0, 1, '0');
+    result.set_transtions(0, 8, '1');
+    result.set_transtions(1, 2, '0');
+    result.set_transtions(1, 3, '1');
+    result.set_transtions(2, 4, '0');
+    result.set_transtions(2, 2, '1');
+    result.set_transtions(3, 5, '0');
+    result.set_transtions(3, 2, '1');
+    result.set_transtions(4, 8, '0');
+    result.set_transtions(4, 6, '1');
+    result.set_transtions(5, 7, '0');
+    result.set_transtions(5, 3, '1');
+    result.set_transtions(6, 5, '0');
+    result.set_transtions(6, 2, '1');
+    result.set_transtions(7, 4, '0');
+    result.set_transtions(7, 3, '1');
+    result.set_transtions(8, 8, '0');
+    result.set_transtions(8, 8, '1');
+    result.set_final_to_DFA(1);
+    result.set_final_to_DFA(3);
+    result.set_final_to_DFA(4);
+    result.set_final_to_DFA(5);
+    result.set_final_to_DFA(6);
+    result.set_final_to_DFA(7);
+    map<int,vector<int> > results = minimizaion (result);
+    FA result2 = minimizedTable(results,result);
+    result2.display();
+    vector<int> vertex = result2.get_vertices();
+    for (int i = 0; i< vertex.size(); i++){
+                  std::cout <<  vertex[i];
+                  std::cout << '\n' ;
+        }
+
+//    for (std::map<int,vector<int> >::iterator itr = results.begin(); itr!=results.end(); ++itr){
+//            std::cout << itr->first <<" " ;
+//              for (std::vector<int> ::iterator it = itr->second.begin(); it!=itr->second.end(); ++it){
+//                  std::cout << *it ;
+//              }
+//                  std::cout << '\n' ;
+//        }
+
+
+
     return 0;
 }
