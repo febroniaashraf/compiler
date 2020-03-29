@@ -26,12 +26,21 @@ public:
     vector<int> final_To_DFA;
     vector<transition> transitions;
     vector<int> vertices;
+    map<int,string> output_file;
 
     FA ()
     {
         no_vertices = 2;
         final_state = 1;
         start_state = 0;
+    }
+    void set_map(int f, string name)
+    {
+        output_file.insert(pair<int,string>(f,name));
+    }
+    map<int,string> get_map()
+    {
+        return output_file;
     }
     void set_vertices(int number)
     {
@@ -62,6 +71,10 @@ public:
     vector<transition> get_tran()
     {
         return transitions;
+    }
+    void set_tran(vector<transition> trans)
+    {
+        transitions = trans;
     }
 
     vector<int> get_vertices()
@@ -110,7 +123,6 @@ map<string, FA> regular_Definitions;
 map<string, FA> regular_Expression;
 map<string, FA> key_words;
 map<char, FA> punctuations;
-vector<pair<string,int>> output_file;
 
 FA concatenation (FA a, FA b)
 {
@@ -124,7 +136,7 @@ FA concatenation (FA a, FA b)
         tran = a.get_tran().at(i);
         result.set_transtions(tran.vertex_from,tran.vertex_to,tran.symbol);
     }
-    result.set_transtions(a.get_finalState(),b.get_startState()+a.get_no_vertices(),'L');
+    result.set_transtions(a.get_finalState(),b.get_startState()+a.get_no_vertices(),'^');
     for (int i = 0 ; i < b.get_tran().size(); i++)
     {
         struct transition tran;
@@ -141,16 +153,16 @@ FA kleene(FA a)
     result.set_vertices(a.get_no_vertices() + 2);
     result.set_startState(a.get_startState());
     result.set_finalState(a.get_finalState() + 2);
-    result.set_transtions(result.get_startState(), a.get_startState() + 1, 'L');
-    result.set_transtions(result.get_startState(), result.get_finalState(), 'L');
+    result.set_transtions(result.get_startState(), a.get_startState() + 1, '^');
+    result.set_transtions(result.get_startState(), result.get_finalState(), '^');
     for (int i = 0 ; i < a.get_tran().size(); i++)
     {
         struct transition tran;
         tran = a.get_tran().at(i);
         result.set_transtions(tran.vertex_from+1,tran.vertex_to+1,tran.symbol);
     }
-    result.set_transtions(a.get_finalState()+1,result.get_finalState(),'L');
-    result.set_transtions(result.get_finalState()- 1,result.get_startState() + 1,'L');
+    result.set_transtions(a.get_finalState()+1,result.get_finalState(),'^');
+    result.set_transtions(result.get_finalState()- 1,result.get_startState() + 1,'^');
     return result;
 }
 FA positive_closure(FA a)
@@ -159,15 +171,15 @@ FA positive_closure(FA a)
     result.set_vertices(a.get_no_vertices()+2);
     result.set_startState(a.get_startState());
     result.set_finalState(a.get_finalState()+2);
-    result.set_transtions(result.get_startState(),a.get_startState()+1,'L');
+    result.set_transtions(result.get_startState(),a.get_startState()+1,'^');
     for(int i=0; i<a.get_tran().size(); i++)
     {
         struct transition tran;
         tran = a.get_tran().at(i);
         result.set_transtions(tran.vertex_from+1,tran.vertex_to+1,tran.symbol);
     }
-    result.set_transtions(a.get_finalState()+1,result.get_finalState(),'L');
-    result.set_transtions(result.get_finalState()-1,result.get_startState()+1,'L');
+    result.set_transtions(a.get_finalState()+1,result.get_finalState(),'^');
+    result.set_transtions(result.get_finalState()-1,result.get_startState()+1,'^');
     return result;
 }
 
@@ -189,14 +201,14 @@ FA Union (vector<FA> all)
         {
             start = start+all.at(j).get_no_vertices();
         }
-        result.set_transtions(result.get_startState(), all.at(i).get_startState()+start+1, 'L');
+        result.set_transtions(result.get_startState(), all.at(i).get_startState()+start+1, '^');
         for(int k = 0; k<all.at(i).get_tran().size(); k++)
         {
             struct transition tran;
             tran = all.at(i).get_tran().at(k);
             result.set_transtions(tran.vertex_from+start+1,tran.vertex_to+start+1,tran.symbol);
         }
-        result.set_transtions(all.at(i).get_finalState()+start+1,result.get_finalState(),'L');
+        result.set_transtions(all.at(i).get_finalState()+start+1,result.get_finalState(),'^');
     }
     return result;
 }
@@ -319,7 +331,14 @@ void expression_to_NFA(string name, string expression, string type)
 
         if(current == '\\')
         {
-            symbols+= next;
+            if(next == 'L')
+            {
+                symbols+= '^';
+            }
+            else
+            {
+                symbols+= next;
+            }
             i++;
             if(symbols!="")
             {
@@ -557,7 +576,7 @@ void read_file (const char* input_file)
     }
 }
 
-FA Union_NFA(vector<FA> all)
+FA Union_NFA(vector<FA> all, vector<string> names)
 {
     FA result;
     int sum = 0;
@@ -574,15 +593,15 @@ FA Union_NFA(vector<FA> all)
         {
             start = start+all.at(j).get_no_vertices();
         }
-        result.set_transtions(result.get_startState(), all.at(i).get_startState()+start+1, 'L');
+        result.set_transtions(result.get_startState(), all.at(i).get_startState()+start+1, '^');
         for(int k = 0; k<all.at(i).get_tran().size(); k++)
         {
             struct transition tran;
             tran = all.at(i).get_tran().at(k);
             result.set_transtions(tran.vertex_from+start+1,tran.vertex_to+start+1,tran.symbol);
         }
-        output_file.at(i).second = all.at(i).get_finalState()+start+1;
         result.set_final_to_DFA(all.at(i).get_finalState()+start+1);
+        result.set_map(all.at(i).get_finalState()+start+1, names.at(i));
     }
     return result;
 }
@@ -591,6 +610,7 @@ FA language()
 {
     FA result;
     vector<FA> all;
+    vector<string> names;
     map<string, FA> grammer;
     map<string, FA>::iterator itr;
     for (itr = regular_Expression.begin(); itr != regular_Expression.end(); ++itr)
@@ -610,13 +630,10 @@ FA language()
     }
     for (itr = grammer.begin(); itr != grammer.end(); ++itr)
     {
-        pair<string, int> o;
-        o.first = itr->first;
-        o.second = itr->second.get_finalState();
-        output_file.push_back(o);
         all.push_back(itr->second);
+        names.push_back(itr->first);
     }
-    result = Union_NFA(all);
+    result = Union_NFA(all, names);
     return result;
 }
 
@@ -658,7 +675,7 @@ FA NFAtoDFA (FA a)
         for(int i =0; i< transitions.size(); i++)
         {
             struct transition t = transitions.at(i);
-            if(t.vertex_from == j && t.symbol == 'L')
+            if(t.vertex_from == j && t.symbol == '^')
             {
                 bool inS0 = false;
                 for(int inS=0; inS<elem.eq.size(); inS++)
@@ -693,7 +710,7 @@ FA NFAtoDFA (FA a)
             for(int sym=0; sym<symbols.size(); sym++) //GET THE NEXT STATE FOR EVERY SYMBOL
             {
                 char currentSymbol = symbols.at(sym);
-                if(currentSymbol != 'L')
+                if(currentSymbol != '^')
                 {
                     struct DFAelement eNew;
                     eNew.mark=false;
@@ -729,7 +746,7 @@ FA NFAtoDFA (FA a)
                         for(int k =0; k< transitions.size(); k++)
                         {
                             struct transition t = transitions.at(k);
-                            if(t.vertex_from == from && t.symbol == 'L')
+                            if(t.vertex_from == from && t.symbol == '^')
                             {
                                 bool inE = false;
                                 for(int s=0; s<eNew.eq.size(); s++)
@@ -811,7 +828,6 @@ FA NFAtoDFA (FA a)
         }
         in++;
     }
-     cout <<"done1\n";
     DFA.set_vertices(elements.size());
     return DFA;
 }
@@ -997,16 +1013,141 @@ FA  minimizedTable (map<int, vector<int> > partitions,FA DFA)
     }
 
     result.set_vertices(keyOfStates.size());
-    // result.set_tran(transitions);
+    result.set_tran(transitions);
     return result;
+}
+
+void construct_output(string word, FA mini)
+{
+    vector<transition> trans = mini.get_tran();
+    vector<int> final_states = mini.get_final_to_DFA();
+    vector<int> fin;
+    for(int i=0;i<word.length();i++)
+    {
+        bool flag = false;
+        vector<int> v;
+        vector<int> v1;
+        if(i==0)
+        {
+            v.push_back(0);
+        }
+        for(int k = 0;k<v.size();k++)
+        {
+          for(int j=0;j<trans.size();j++)
+          {
+              transition tran = trans.at(j);
+              if(tran.vertex_from == v.at(k))
+              {
+                  if(tran.symbol == word[i])
+                  {
+                      v1.push_back(tran.vertex_to);
+                      flag = true;
+                  }
+              }
+          }
+          if(!flag)
+          {
+              if(std::find(final_states.begin(), final_states.end(), v.at(k)) != final_states.end())
+              {
+                  if(i==word.length()-1)
+                  {
+                    fin.push_back(v.at(k));
+                  }
+              }
+          }
+          else
+          {
+              flag = false;
+          }
+        }
+        v.clear();
+        v = v1;
+    }
+    string output = "";
+    string output1 = "";
+    string output2 = "";
+    if(fin.size()==0)
+    {
+        output += word+" --> Error, Not Included In Language.";
+    }
+    for(int i=0;i<fin.size();i++)
+    {
+                map<int,string>::iterator itr;
+                itr = mini.get_map().find(fin.at(i));
+                if(itr != mini.get_map().end())
+                {
+                map<string,FA>::iterator it;
+                it = key_words.find(itr->second); // check if symbol exists in Re DE map
+                if(it != key_words.end())
+                {
+                    output1 = itr->second;
+                    break;
+                }
+                it = regular_Expression.find(itr->second);
+                if(it != regular_Expression.end())
+                {
+                    output2 = itr->second;
+                    break;
+                }
+                output = itr->second;
+            }
+    }
+    if(output1 != "")
+    {
+        output = output1;
+    }
+    else if(output2 != "")
+    {
+        output = output2;
+    }
+    std::ofstream outfile;
+    outfile.open("output.txt", std::ios_base::app); // append instead of overwrite
+    outfile << output+"\n";
+    outfile.close();
+}
+
+void read_testProgram(const char* input_file, FA mini)
+{
+    fstream newfile;
+    newfile.open(input_file,ios::in); //open a file to perform read operation using file object
+    if (newfile.is_open())    //checking whether the file is open
+    {
+        string line = "";
+        while(getline(newfile, line))  //read data from file object and put it into string.
+        {
+            string word = "";
+            for (std::string::size_type i = 0; i < line.size(); i++)
+            {
+                if(line[i] == ' ')
+                {
+                    if(word != "")
+                    {
+                      construct_output(word, mini);
+                      word = "";
+                    }
+                }
+                else
+                {
+                    word+= line[i];
+                }
+            }
+            if(word != " " && word != "")
+            {
+                construct_output(word, mini);
+                word = "";
+            }
+        }
+        newfile.close(); //close the file object.
+    }
 }
 int main()
 {
-    read_file("my.txt");
+    read_file("input.txt");
     FA result = language();
     FA dfa = NFAtoDFA(result);
-    //map<int, vector<int>> mini = minimizaion(dfa);
-    //FA miniTable = minimizedTable(mini, dfa);
-    dfa.display();
+    map<int, vector<int> > mini = minimizaion(dfa);
+    FA miniTable = minimizedTable(mini, dfa);
+    read_testProgram("test.txt",miniTable);
+    //result.display();
     return 0;
 }
