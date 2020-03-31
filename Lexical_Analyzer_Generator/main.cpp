@@ -657,6 +657,7 @@ FA NFAtoDFA (FA a)
     for(int i=0; i<transitions.size(); i++) //GET ALL SYMBOLS IN NFA
     {
         char s = transitions.at(i).symbol;
+        if(s != 'L'){
         bool contain= false;
         for(int j=0; j<symbols.size(); j++)
         {
@@ -669,6 +670,7 @@ FA NFAtoDFA (FA a)
         if(!contain)
         {
             symbols.push_back(s);
+        }
         }
     }
 
@@ -811,6 +813,7 @@ FA NFAtoDFA (FA a)
                             dummyState = increase;
                         }
                         bool fin = false; //check if this state is a final state or not
+                        string accept;
                         for(int finalS=0; finalS<eNew.eq.size(); finalS++)
                         {
                             for(int final2=0; final2<finalStates.size(); final2++)
@@ -818,6 +821,7 @@ FA NFAtoDFA (FA a)
                                 if(eNew.eq.at(finalS) == finalStates.at(final2))
                                 {
                                     fin = true;
+                                    accept = a.get_map()[finalStates.at(final2)];
                                     break;
                                 }
                             }
@@ -825,6 +829,7 @@ FA NFAtoDFA (FA a)
                         if(fin)
                         {
                             DFA.set_final_to_DFA(eNew.index);
+                            DFA.set_map(eNew.index,accept);
                         }
                     }
                     else
