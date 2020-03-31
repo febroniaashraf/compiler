@@ -904,7 +904,7 @@ string findNextStats (int state, vector<transition> transitions, vector<char> in
         {
             if(transitions[i].vertex_from == state && transitions[i].symbol == inputs.at(j))
             {
-                mySS << keyOfStates[transitions[i].vertex_to];
+                mySS << keyOfStates[transitions[i].vertex_to] << "^";
             }
         }
     }
@@ -1169,50 +1169,64 @@ void read_testProgram(const char* input_file, FA mini)
 }
 int main()
 {
-    FA result;
-    result.set_vertices(9);
-    result.set_transtions(0, 1, '0');
-    result.set_transtions(0, 8, '1');
-    result.set_transtions(1, 2, '0');
-    result.set_transtions(1, 3, '1');
-    result.set_transtions(2, 4, '0');
-    result.set_transtions(2, 2, '1');
-    result.set_transtions(3, 5, '0');
-    result.set_transtions(3, 2, '1');
-    result.set_transtions(4, 8, '0');
-    result.set_transtions(4, 6, '1');
-    result.set_transtions(5, 7, '0');
-    result.set_transtions(5, 3, '1');
-    result.set_transtions(6, 5, '0');
-    result.set_transtions(6, 2, '1');
-    result.set_transtions(7, 4, '0');
-    result.set_transtions(7, 3, '1');
-    result.set_transtions(8, 8, '0');
-    result.set_transtions(8, 8, '1');
-    result.set_final_to_DFA(1);
-    result.set_final_to_DFA(3);
-    result.set_final_to_DFA(4);
-    result.set_final_to_DFA(5);
-    result.set_final_to_DFA(6);
-    result.set_final_to_DFA(7);
-    map<int,vector<int> > results = minimizaion (result);
-    FA result2 = minimizedTable(results,result);
-    result2.display();
-    vector<int> vertex = result2.get_vertices();
-    for (int i = 0; i< vertex.size(); i++){
-                  std::cout <<  vertex[i];
-                  std::cout << '\n' ;
+//    FA result;
+//    result.set_vertices(7);
+//    result.set_startState(0);
+//    result.set_transtions(0, 1, '^');
+//    result.set_transtions(0, 2, '^');
+//    result.set_transtions(0, 4, '^');
+//    result.set_transtions(1, 3, '0');
+//    result.set_transtions(1, 3, '1');
+//    result.set_transtions(1, 2, '^');
+//    result.set_transtions(2, 3, '0');
+//    result.set_transtions(2, 4, '^');
+//    result.set_transtions(3, 4, '0');
+//    result.set_transtions(3, 5, '1');
+//    result.set_transtions(3, 6, '^');
+//    result.set_transtions(4, 4, '0');
+//    result.set_transtions(4, 1, '^');
+//    result.set_transtions(5, 4, '1');
+//    result.set_transtions(5, 6, '^');
+//
+//    result.set_final_to_DFA(6);
+//FA dfa = NFAtoDFA(result);
+//      dfa.display();
+//   map<int,vector<int> > results = minimizaion (dfa);
+//  FA result2 = minimizedTable(results,dfa);
+//  result2.display();
+
+    read_file("input.txt");
+    FA result = language();
+//    int counter = 0;
+      FA dfa = NFAtoDFA(result);
+    FA mini = minimizedTable(minimizaion(dfa), dfa);
+//     mini.display();
+    vector<transition> transitions = mini.get_tran();
+    map<int,int> map2;
+    map<int, string > myMap = mini.get_map();
+    for(int i = 0; i< transitions.size();i++){
+        if(map2.find(i) == map2.end()){
+            map2[i] = 1;
+           cout<< transitions[i].vertex_from << " --> "<<transitions[i].vertex_to << " : ";
+                      cout<< transitions[i].symbol<< " ";
+        for(int j = i + 1; j< transitions.size();j++){
+                if((map2.find(j) == map2.end()) && (transitions[i].vertex_from == transitions[j].vertex_from) && (transitions[i].vertex_to == transitions[j].vertex_to)){
+                cout<< transitions[j].symbol<< " ";
+                 map2[j] = 1;
+                  }
+                }
+            cout<<'\n';
         }
+    }
 
-//    for (std::map<int,vector<int> >::iterator itr = results.begin(); itr!=results.end(); ++itr){
-//            std::cout << itr->first <<" " ;
-//              for (std::vector<int> ::iterator it = itr->second.begin(); it!=itr->second.end(); ++it){
-//                  std::cout << *it ;
-//              }
-//                  std::cout << '\n' ;
-//        }
-
+    for(map<int, string >::const_iterator it = myMap.begin();
+    it != myMap.end(); ++it)
+{
+    std::cout << it->first << " " << it->second <<"\n";
+}
 
 
+
+    //read_testProgram("test.txt", mini);
     return 0;
 }
