@@ -657,7 +657,7 @@ FA NFAtoDFA (FA a)
     for(int i=0; i<transitions.size(); i++) //GET ALL SYMBOLS IN NFA
     {
         char s = transitions.at(i).symbol;
-        if(s != 'L'){
+        if(s != '^'){
         bool contain= false;
         for(int j=0; j<symbols.size(); j++)
         {
