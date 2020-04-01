@@ -132,6 +132,7 @@ map<string, FA> regular_Definitions;
 map<string, FA> regular_Expression;
 map<string, FA> key_words;
 map<char, FA> punctuations;
+map<int,string> finalStatesMap;
 
 FA concatenation (FA a, FA b)
 {
@@ -610,6 +611,7 @@ FA Union_NFA(vector<FA> all, vector<string> names)
             result.set_transtions(tran.vertex_from+start+1,tran.vertex_to+start+1,tran.symbol);
         }
         result.set_final_to_DFA(all.at(i).get_finalState()+start+1);
+        finalStatesMap.insert(pair<int,string>(all.at(i).get_finalState()+start+1, names.at(i)));
         result.set_map(all.at(i).get_finalState()+start+1, names.at(i));
     }
     return result;
@@ -649,22 +651,6 @@ FA language()
 FA NFAtoDFA (FA a)
 {
     FA DFA;
-    	map<int, string>::iterator it = a.get_map().begin();
-
-	// Iterate over the map using Iterator till end.
-	while (it != a.get_map().end())
-	{
-		// Accessing KEY from element pointed by it.
-		int word = it->first;
-
-		// Accessing VALUE from element pointed by it.
-		string count = it->second;
-
-		cout << word << " :: " << count << endl;
-
-		// Increment the Iterator to point to next entry
-		it++;
-	}
     vector<transition> transitions = a.get_tran();
     vector<int> finalStates = a.get_final_to_DFA();
     vector<char> symbols;
@@ -829,30 +815,21 @@ FA NFAtoDFA (FA a)
                         }
                         bool fin = false; //check if this state is a final state or not
                         string accept;
-//                        for(int finalS=0; finalS<eNew.eq.size(); finalS++)
-//                        {
-//                            for(int final2=0; final2<finalStates.size(); final2++)
-//                            {
-//                                if(eNew.eq.at(finalS) == finalStates.at(final2))
-//                                {
-//                                    fin = true;
-//                                    accept = a.get_map()[finalStates.at(final2)];
-//                                    break;
-//                                }
-//                            }
-//                        }
-                        for(int finalS=0; finalS<eNew.eq.size(); finalS++){
-                            if(a.get_map().count(eNew.eq.at(finalS)) > 0){
-                                fin = true;
-                                    accept = a.get_map()[eNew.eq.at(finalS)];
+                        for(int finalS=0; finalS<eNew.eq.size(); finalS++)
+                        {
+                            for(int final2=0; final2<finalStates.size(); final2++)
+                            {
+                                if(eNew.eq.at(finalS) == finalStates.at(final2))
+                                {
+                                    fin = true;
+                                    accept = a.get_map()[finalStates.at(final2)];
                                     break;
+                                }
                             }
-
                         }
                         if(fin)
                         {
                             DFA.set_final_to_DFA(eNew.index);
-                            cout << eNew.index << " " << accept << "\n";
                             DFA.set_map(eNew.index,accept);
                         }
                     }
@@ -1193,6 +1170,11 @@ int main()
 {
    read_file("input.txt");
     FA result = language();
+    map<int, string>::iterator itr;
+    for (itr = finalStatesMap.begin(); itr != finalStatesMap.end(); ++itr)
+    {
+        cout << itr->first << " " << itr->second << endl;
+    }
     FA dfa = NFAtoDFA(result);
     FA mini = minimizedTable(minimizaion(dfa), dfa);
     read_testProgram("test.txt", mini);
