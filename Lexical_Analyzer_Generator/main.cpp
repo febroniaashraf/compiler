@@ -649,7 +649,6 @@ FA language()
 FA NFAtoDFA (FA a)
 {
     FA DFA;
-
     vector<transition> transitions = a.get_tran();
     vector<int> finalStates = a.get_final_to_DFA();
     vector<char> symbols;
@@ -821,7 +820,9 @@ FA NFAtoDFA (FA a)
                                 if(eNew.eq.at(finalS) == finalStates.at(final2))
                                 {
                                     fin = true;
+                                    if(a.get_map().count(finalStates.at(final2))){
                                     accept = a.get_map()[finalStates.at(final2)];
+                                    }
                                     break;
                                 }
                             }
@@ -1049,10 +1050,10 @@ void construct_output(string word, FA mini)
     vector<transition> trans = mini.get_tran();
     vector<int> final_states = mini.get_final_to_DFA();
     vector<int> fin;
+    vector<int> v;
     for(int i=0;i<word.length();i++)
     {
         bool flag = false;
-        vector<int> v;
         vector<int> v1;
         if(i==0)
         {
@@ -1072,24 +1073,22 @@ void construct_output(string word, FA mini)
                   }
               }
           }
-          if(!flag)
-          {
-              if(std::find(final_states.begin(), final_states.end(), v.at(k)) != final_states.end())
-              {
-                  if(i==word.length()-1)
-                  {
-                    fin.push_back(v.at(k));
-                  }
-              }
-          }
-          else
-          {
-              flag = false;
-          }
         }
-        v.clear();
-        v = v1;
+          v.clear();
+        for(int k =0;k<v1.size();k++)
+        {
+            v.push_back(v1.at(k));
+        }
+        v1.clear();
     }
+    for(int i=0;i<v.size();i++)
+    {
+        if(std::find(final_states.begin(), final_states.end(), v.at(i)) != final_states.end())
+              {
+                    fin.push_back(v.at(i));
+              }
+    }
+
     string output = "";
     string output1 = "";
     string output2 = "";
@@ -1129,7 +1128,7 @@ void construct_output(string word, FA mini)
     }
     std::ofstream outfile;
     outfile.open("output.txt", std::ios_base::app); // append instead of overwrite
-    outfile << output+"\n";
+    outfile << output+" "+word+"\n";
     outfile.close();
 }
 
@@ -1198,9 +1197,11 @@ int main()
     read_file("input.txt");
     FA result = language();
 //    int counter = 0;
-      FA dfa = NFAtoDFA(result);
+    FA dfa = NFAtoDFA(result);
     FA mini = minimizedTable(minimizaion(dfa), dfa);
+
 //     mini.display();
+<<<<<<< HEAD
     vector<transition> transitions = dfa.get_tran();
     map<int,int> map2;
     map<int, string > myMap = dfa.get_map();
@@ -1218,6 +1219,25 @@ int main()
             cout<<'\n';
         }
     }
+=======
+//    vector<transition> transitions = dfa.get_tran();
+//    map<int,int> map2;
+     map<int, string > myMap = dfa.get_map();
+//    for(int i = 0; i< transitions.size();i++){
+//        if(map2.find(i) == map2.end()){
+//            map2[i] = 1;
+//           cout<< transitions[i].vertex_from << " --> "<<transitions[i].vertex_to << " : ";
+//                      cout<< transitions[i].symbol<< " ";
+//        for(int j = i + 1; j< transitions.size();j++){
+//                if((map2.find(j) == map2.end()) && (transitions[i].vertex_from == transitions[j].vertex_from) && (transitions[i].vertex_to == transitions[j].vertex_to)){
+//                cout<< transitions[j].symbol<< " ";
+//                 map2[j] = 1;
+//                  }
+//                }
+//            cout<<'\n';
+//        }
+//    }
+>>>>>>> e27ed6305d8938e98520d5f84dd42bcbccc3b861
 
     for(map<int, string >::const_iterator it = myMap.begin();
     it != myMap.end(); ++it)
@@ -1227,6 +1247,6 @@ int main()
 
 
 
-    //read_testProgram("test.txt", mini);
+    read_testProgram("test.txt", mini);
     return 0;
 }
