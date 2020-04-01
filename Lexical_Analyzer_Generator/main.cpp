@@ -132,6 +132,7 @@ map<string, FA> regular_Definitions;
 map<string, FA> regular_Expression;
 map<string, FA> key_words;
 map<char, FA> punctuations;
+map<int,string> finalStatesMap;
 
 FA concatenation (FA a, FA b)
 {
@@ -610,6 +611,7 @@ FA Union_NFA(vector<FA> all, vector<string> names)
             result.set_transtions(tran.vertex_from+start+1,tran.vertex_to+start+1,tran.symbol);
         }
         result.set_final_to_DFA(all.at(i).get_finalState()+start+1);
+        finalStatesMap.insert(pair<int,string>(all.at(i).get_finalState()+start+1, names.at(i)));
         result.set_map(all.at(i).get_finalState()+start+1, names.at(i));
     }
     return result;
@@ -997,7 +999,6 @@ FA  minimizedTable (map<int, vector<int> > partitions,FA DFA)
     vector<transition> transitions = DFA.get_tran();
     vector<int> finalStates= DFA.get_final_to_DFA();
     vector<int> vertices= DFA.get_vertices();
-    map<int,string> output_file = DFA.get_map();
     for (std::map<int,vector<int> >::iterator it = partitions.begin(); it!=partitions.end(); ++it)
     {
         if(it->second.size() > 1)
@@ -1030,14 +1031,13 @@ FA  minimizedTable (map<int, vector<int> > partitions,FA DFA)
     {
         if(keyOfStates.count(vertices[i]))
         {
-            output_file.erase(vertices[i]);
+            finalStatesMap.erase(vertices[i]);
             vertices.erase(vertices.begin()+i);
 
         }
     }
     int vertices_num= DFA.vertices.size() - keyOfStates.size();
     result.set_vertices(vertices);
-    result.set_map2(output_file);
     result.set_no_vertices(vertices_num);
     result.set_tran(transitions);
     return result;
@@ -1169,9 +1169,9 @@ int main()
    read_file("input.txt");
     FA result = language();
     map<int, string>::iterator itr;
-    for (itr = result.get_map().begin(); itr != result.get_map().end(); ++itr)
+    for (itr = finalStatesMap.begin(); itr != finalStatesMap.end(); ++itr)
     {
-        cout << itr->first << " "<<itr->second <<"_SD2E_YA_MERNA" << endl;
+        cout << itr->first << " " << itr->second << endl;
     }
     FA dfa = NFAtoDFA(result);
     FA mini = minimizedTable(minimizaion(dfa), dfa);
