@@ -1201,9 +1201,9 @@ int main()
       FA dfa = NFAtoDFA(result);
     FA mini = minimizedTable(minimizaion(dfa), dfa);
 //     mini.display();
-    vector<transition> transitions = mini.get_tran();
+    vector<transition> transitions = dfa.get_tran();
     map<int,int> map2;
-    map<int, string > myMap = mini.get_map();
+    map<int, string > myMap = dfa.get_map();
     for(int i = 0; i< transitions.size();i++){
         if(map2.find(i) == map2.end()){
             map2[i] = 1;
