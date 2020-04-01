@@ -38,7 +38,7 @@ public:
     {
         output_file.insert(pair<int,string>(f,name));
     }
-    void set_map(map<int,string> map_output){
+    void set_map2(map<int,string> map_output){
         output_file = map_output;
     }
     map<int,string> get_map()
@@ -649,6 +649,22 @@ FA language()
 FA NFAtoDFA (FA a)
 {
     FA DFA;
+    	map<int, string>::iterator it = a.get_map().begin();
+
+	// Iterate over the map using Iterator till end.
+	while (it != a.get_map().end())
+	{
+		// Accessing KEY from element pointed by it.
+		int word = it->first;
+
+		// Accessing VALUE from element pointed by it.
+		string count = it->second;
+
+		cout << word << " :: " << count << endl;
+
+		// Increment the Iterator to point to next entry
+		it++;
+	}
     vector<transition> transitions = a.get_tran();
     vector<int> finalStates = a.get_final_to_DFA();
     vector<char> symbols;
@@ -813,23 +829,30 @@ FA NFAtoDFA (FA a)
                         }
                         bool fin = false; //check if this state is a final state or not
                         string accept;
-                        for(int finalS=0; finalS<eNew.eq.size(); finalS++)
-                        {
-                            for(int final2=0; final2<finalStates.size(); final2++)
-                            {
-                                if(eNew.eq.at(finalS) == finalStates.at(final2))
-                                {
-                                    fin = true;
-                                    if(a.get_map().count(finalStates.at(final2))){
-                                    accept = a.get_map()[finalStates.at(final2)];
-                                    }
+//                        for(int finalS=0; finalS<eNew.eq.size(); finalS++)
+//                        {
+//                            for(int final2=0; final2<finalStates.size(); final2++)
+//                            {
+//                                if(eNew.eq.at(finalS) == finalStates.at(final2))
+//                                {
+//                                    fin = true;
+//                                    accept = a.get_map()[finalStates.at(final2)];
+//                                    break;
+//                                }
+//                            }
+//                        }
+                        for(int finalS=0; finalS<eNew.eq.size(); finalS++){
+                            if(a.get_map().count(eNew.eq.at(finalS)) > 0){
+                                fin = true;
+                                    accept = a.get_map()[eNew.eq.at(finalS)];
                                     break;
-                                }
                             }
+
                         }
                         if(fin)
                         {
                             DFA.set_final_to_DFA(eNew.index);
+                            cout << eNew.index << " " << accept << "\n";
                             DFA.set_map(eNew.index,accept);
                         }
                     }
@@ -1039,7 +1062,7 @@ FA  minimizedTable (map<int, vector<int> > partitions,FA DFA)
     }
     int vertices_num= DFA.vertices.size() - keyOfStates.size();
     result.set_vertices(vertices);
-    result.set_map(output_file);
+    result.set_map2(output_file);
     result.set_no_vertices(vertices_num);
     result.set_tran(transitions);
     return result;
@@ -1168,85 +1191,10 @@ void read_testProgram(const char* input_file, FA mini)
 }
 int main()
 {
-//    FA result;
-//    result.set_vertices(7);
-//    result.set_startState(0);
-//    result.set_transtions(0, 1, '^');
-//    result.set_transtions(0, 2, '^');
-//    result.set_transtions(0, 4, '^');
-//    result.set_transtions(1, 3, '0');
-//    result.set_transtions(1, 3, '1');
-//    result.set_transtions(1, 2, '^');
-//    result.set_transtions(2, 3, '0');
-//    result.set_transtions(2, 4, '^');
-//    result.set_transtions(3, 4, '0');
-//    result.set_transtions(3, 5, '1');
-//    result.set_transtions(3, 6, '^');
-//    result.set_transtions(4, 4, '0');
-//    result.set_transtions(4, 1, '^');
-//    result.set_transtions(5, 4, '1');
-//    result.set_transtions(5, 6, '^');
-//
-//    result.set_final_to_DFA(6);
-//FA dfa = NFAtoDFA(result);
-//      dfa.display();
-//   map<int,vector<int> > results = minimizaion (dfa);
-//  FA result2 = minimizedTable(results,dfa);
-//  result2.display();
-
-    read_file("input.txt");
+   read_file("input.txt");
     FA result = language();
-//    int counter = 0;
     FA dfa = NFAtoDFA(result);
     FA mini = minimizedTable(minimizaion(dfa), dfa);
-
-//     mini.display();
-<<<<<<< HEAD
-    vector<transition> transitions = dfa.get_tran();
-    map<int,int> map2;
-    map<int, string > myMap = dfa.get_map();
-    for(int i = 0; i< transitions.size();i++){
-        if(map2.find(i) == map2.end()){
-            map2[i] = 1;
-           cout<< transitions[i].vertex_from << " --> "<<transitions[i].vertex_to << " : ";
-                      cout<< transitions[i].symbol<< " ";
-        for(int j = i + 1; j< transitions.size();j++){
-                if((map2.find(j) == map2.end()) && (transitions[i].vertex_from == transitions[j].vertex_from) && (transitions[i].vertex_to == transitions[j].vertex_to)){
-                cout<< transitions[j].symbol<< " ";
-                 map2[j] = 1;
-                  }
-                }
-            cout<<'\n';
-        }
-    }
-=======
-//    vector<transition> transitions = dfa.get_tran();
-//    map<int,int> map2;
-     map<int, string > myMap = dfa.get_map();
-//    for(int i = 0; i< transitions.size();i++){
-//        if(map2.find(i) == map2.end()){
-//            map2[i] = 1;
-//           cout<< transitions[i].vertex_from << " --> "<<transitions[i].vertex_to << " : ";
-//                      cout<< transitions[i].symbol<< " ";
-//        for(int j = i + 1; j< transitions.size();j++){
-//                if((map2.find(j) == map2.end()) && (transitions[i].vertex_from == transitions[j].vertex_from) && (transitions[i].vertex_to == transitions[j].vertex_to)){
-//                cout<< transitions[j].symbol<< " ";
-//                 map2[j] = 1;
-//                  }
-//                }
-//            cout<<'\n';
-//        }
-//    }
->>>>>>> e27ed6305d8938e98520d5f84dd42bcbccc3b861
-
-    for(map<int, string >::const_iterator it = myMap.begin();
-    it != myMap.end(); ++it)
-{
-    std::cout << it->first << " " << it->second <<"\n";
-}
-
-
-
     read_testProgram("test.txt", mini);
     return 0;
 }
