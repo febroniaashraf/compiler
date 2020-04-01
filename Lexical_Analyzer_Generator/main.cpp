@@ -999,7 +999,6 @@ FA  minimizedTable (map<int, vector<int> > partitions,FA DFA)
     vector<transition> transitions = DFA.get_tran();
     vector<int> finalStates= DFA.get_final_to_DFA();
     vector<int> vertices= DFA.get_vertices();
-    map<int,string> output_file = DFA.get_map();
     for (std::map<int,vector<int> >::iterator it = partitions.begin(); it!=partitions.end(); ++it)
     {
         if(it->second.size() > 1)
@@ -1032,14 +1031,13 @@ FA  minimizedTable (map<int, vector<int> > partitions,FA DFA)
     {
         if(keyOfStates.count(vertices[i]))
         {
-            output_file.erase(vertices[i]);
+            finalStatesMap.erase(vertices[i]);
             vertices.erase(vertices.begin()+i);
 
         }
     }
     int vertices_num= DFA.vertices.size() - keyOfStates.size();
     result.set_vertices(vertices);
-    result.set_map2(output_file);
     result.set_no_vertices(vertices_num);
     result.set_tran(transitions);
     return result;
