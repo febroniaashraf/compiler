@@ -132,7 +132,7 @@ map<string, FA> regular_Definitions;
 map<string, FA> regular_Expression;
 map<string, FA> key_words;
 map<char, FA> punctuations;
-map<int,string> fa;
+map<int,string> finalStatesMap;
 
 FA concatenation (FA a, FA b)
 {
@@ -611,7 +611,7 @@ FA Union_NFA(vector<FA> all, vector<string> names)
             result.set_transtions(tran.vertex_from+start+1,tran.vertex_to+start+1,tran.symbol);
         }
         result.set_final_to_DFA(all.at(i).get_finalState()+start+1);
-        fa.insert(pair<int,string>(all.at(i).get_finalState()+start+1, names.at(i)));
+        finalStatesMap.insert(pair<int,string>(all.at(i).get_finalState()+start+1, names.at(i)));
         result.set_map(all.at(i).get_finalState()+start+1, names.at(i));
     }
     return result;
@@ -817,9 +817,9 @@ FA NFAtoDFA (FA a)
                         string accept;
                         int finalS=0;
                         for(finalS=0; finalS<eNew.eq.size(); finalS++){
-                            if(fa.count(eNew.eq.at(finalS)) > 0){
+                            if(finalStatesMap.count(eNew.eq.at(finalS)) > 0){
                                 fin = true;
-                                    accept = fa[eNew.eq.at(finalS)];
+                                    accept = finalStatesMap[eNew.eq.at(finalS)];
                                     break;
                             }
 
