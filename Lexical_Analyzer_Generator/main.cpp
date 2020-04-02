@@ -914,25 +914,20 @@ map<int, vector<int> > minimizaion (FA DFA)
     partitions.insert(pair<int, vector<int> >(1,NonFinalStates));
     mySS.push_back(1);
 
-
     vector<vector<int> > finalStatesRelated;
      for(int i = 0; i < finalStates.size(); i++){
       if(!mmap.count(i)){
         vector<int> v;
         v.push_back(finalStates[i]);
         mmap[i] = 1;
-        cout<<finalStatesMap[finalStates[i]]<<"  "<<'\n';
         for(int j = 0; j < finalStates.size(); j++){
            if(!mmap.count(j) && finalStatesMap[finalStates[i]] ==  finalStatesMap[finalStates[j]]) {
                 v.push_back(finalStates[j]);
                 mmap[j] = 1;
-                cout<<finalStatesMap[finalStates[j]] << "  "<<'\n';
         }
         }
-                cout<<"mmmmmmmmm"<<'\n';
         finalStatesRelated.push_back(v);
         }
-
     }
          for(int i = 0; i < finalStatesRelated.size(); i++){
                 numberOfSets++;
