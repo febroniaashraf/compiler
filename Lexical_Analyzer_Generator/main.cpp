@@ -26,7 +26,6 @@ public:
     vector<int> final_To_DFA;
     vector<transition> transitions;
     vector<int> vertices;
-    map<int,string> output_file;
 
     FA ()
     {
@@ -34,17 +33,7 @@ public:
         final_state = 1;
         start_state = 0;
     }
-    void set_map(int f, string name)
-    {
-        output_file.insert(pair<int,string>(f,name));
-    }
-    void set_map2(map<int,string> map_output){
-        output_file = map_output;
-    }
-    map<int,string> get_map()
-    {
-        return output_file;
-    }
+
     void set_vertices(int number)
     {
         no_vertices = number;
@@ -133,6 +122,8 @@ map<string, FA> regular_Expression;
 map<string, FA> key_words;
 map<char, FA> punctuations;
 map<int,string> finalStatesMap;
+map<int,string> nfa;
+map<int,vector<string> > Mini;
 
 FA concatenation (FA a, FA b)
 {
@@ -611,8 +602,7 @@ FA Union_NFA(vector<FA> all, vector<string> names)
             result.set_transtions(tran.vertex_from+start+1,tran.vertex_to+start+1,tran.symbol);
         }
         result.set_final_to_DFA(all.at(i).get_finalState()+start+1);
-        finalStatesMap.insert(pair<int,string>(all.at(i).get_finalState()+start+1, names.at(i)));
-        result.set_map(all.at(i).get_finalState()+start+1, names.at(i));
+        nfa.insert(pair<int,string>(all.at(i).get_finalState()+start+1, names.at(i)));
     }
     return result;
 }
@@ -817,17 +807,16 @@ FA NFAtoDFA (FA a)
                         string accept;
                         int finalS=0;
                         for(finalS=0; finalS<eNew.eq.size(); finalS++){
-                            if(finalStatesMap.count(eNew.eq.at(finalS)) > 0){
-                                fin = true;
-                                    accept = finalStatesMap[eNew.eq.at(finalS)];
+                            if(nfa.count(eNew.eq.at(finalS))){
+                                    fin = true;
+                                    accept = nfa[eNew.eq.at(finalS)];
                                     break;
                             }
-
                         }
                         if(fin)
                         {
                             DFA.set_final_to_DFA(eNew.index);
-                            DFA.set_map(eNew.index,accept);
+                            finalStatesMap.insert(pair<int,string>(eNew.index,accept));
                         }
                     }
                     else
@@ -842,19 +831,6 @@ FA NFAtoDFA (FA a)
     }
     DFA.set_vertices(elements.size());
     return DFA;
-}
-
-void output()
-{
-
-
-    FA result;
-    FA result2;
-    map<string, FA>::iterator itr;
-    map<string, FA>::iterator itr2;
-    FA re = language();
-    re.display();
-
 }
 
 vector<int> getNonFinalStates(vector<int> first, vector<int> second)
@@ -919,7 +895,7 @@ void updateMapValues(int value,vector<int> v, std::map<int, int> &keyOfStates)
 
 map<int, vector<int> > minimizaion (FA DFA)
 {
-    int numberOfSets = 2;
+    int numberOfSets = 1;
     int counter = 0;
     int whichPartition = 1;
 
@@ -933,13 +909,29 @@ map<int, vector<int> > minimizaion (FA DFA)
     vector<char> inputs = getInputs(transitions);
     vector<int> currntVector = NonFinalStates;
     vector<int> mySS;
-
     updateMapValues(1,NonFinalStates,keyOfStates);
-    updateMapValues(2,finalStates,keyOfStates);
     partitions.insert(pair<int, vector<int> >(1,NonFinalStates));
-    partitions.insert(pair<int, vector<int> >(2,finalStates));
     mySS.push_back(1);
-    mySS.push_back(2);
+
+    vector<vector<int> > finalStatesRelated;
+     for(int i = 0; i < finalStates.size(); i++){
+        vector<int> v;
+        v.push_back(finalStates[i]);
+        for(int j = i + 1; j < finalStates.size(); j++){
+           if(finalStatesMap[finalStates[i]] ==  finalStatesMap[finalStates[j]]) {
+                v.push_back(finalStates[j]);
+                finalStates.erase(finalStates.begin() + j);
+        }
+        }
+        finalStatesRelated.push_back(v);
+        finalStates.erase(finalStates.begin()+i);
+    }
+         for(int i = 0; i < finalStatesRelated.size(); i++){
+                numberOfSets++;
+                updateMapValues(numberOfSets,finalStatesRelated[i],keyOfStates);
+                partitions.insert(pair<int, vector<int> >(numberOfSets,finalStatesRelated[i]));
+              mySS.push_back(numberOfSets);
+        }
 
     while(currntVector.size() > counter)
     {
@@ -995,8 +987,9 @@ FA  minimizedTable (map<int, vector<int> > partitions,FA DFA)
     std::map<int, int> keyOfStates;
     vector<transition> transitions = DFA.get_tran();
     vector<int> finalStates= DFA.get_final_to_DFA();
+
     vector<int> vertices= DFA.get_vertices();
-    map<int,string> output_file = DFA.get_map();
+    result.set_startState(DFA.get_startState());
     for (std::map<int,vector<int> >::iterator it = partitions.begin(); it!=partitions.end(); ++it)
     {
         if(it->second.size() > 1)
@@ -1022,21 +1015,23 @@ FA  minimizedTable (map<int, vector<int> > partitions,FA DFA)
     {
         if(!keyOfStates.count(finalStates[i]))
         {
+            vector<string>  v ;
+            v.push_back(finalStatesMap[finalStates[i]]);
+            Mini.insert(pair<int,vector<string> >(finalStates[i],v));
             result.set_final_to_DFA(finalStates[i]);
+        } else {
+            Mini[keyOfStates[finalStates[i]]].push_back(finalStatesMap[finalStates[i]]);
         }
     }
     for(int i=0; i<vertices.size(); i++)
     {
         if(keyOfStates.count(vertices[i]))
         {
-            output_file.erase(vertices[i]);
             vertices.erase(vertices.begin()+i);
-
         }
     }
     int vertices_num= DFA.vertices.size() - keyOfStates.size();
     result.set_vertices(vertices);
-    result.set_map2(output_file);
     result.set_no_vertices(vertices_num);
     result.set_tran(transitions);
     return result;
@@ -1054,7 +1049,7 @@ void construct_output(string word, FA mini)
         vector<int> v1;
         if(i==0)
         {
-            v.push_back(0);
+            v.push_back(mini.get_startState());
         }
         for(int k = 0;k<v.size();k++)
         {
@@ -1071,7 +1066,7 @@ void construct_output(string word, FA mini)
               }
           }
         }
-          v.clear();
+        v.clear();
         for(int k =0;k<v1.size();k++)
         {
             v.push_back(v1.at(k));
@@ -1080,52 +1075,62 @@ void construct_output(string word, FA mini)
     }
     for(int i=0;i<v.size();i++)
     {
-        if(std::find(final_states.begin(), final_states.end(), v.at(i)) != final_states.end())
-              {
-                    fin.push_back(v.at(i));
-              }
+        map<int,string>::iterator itr;
+        itr = finalStatesMap.find(v.at(i));
+        if(itr != finalStatesMap.end())
+        {
+            fin.push_back(v.at(i));
+        }
     }
-
     string output = "";
     string output1 = "";
     string output2 = "";
+    string output3 = "";
     if(fin.size()==0)
     {
         output += word+" --> Error, Not Included In Language.";
     }
     for(int i=0;i<fin.size();i++)
     {
-                map<int,string>::iterator itr;
-                itr = mini.get_map().find(fin.at(i));
-                if(itr != mini.get_map().end())
+                map<int, vector<string> >::iterator itr;
+                itr = Mini.find(fin.at(i));
+                if(itr != Mini.end())
+                {
+                for(int j=0;j<itr->second.size();j++)
                 {
                 map<string,FA>::iterator it;
-                it = key_words.find(itr->second); // check if symbol exists in Re DE map
-                if(it != key_words.end())
+                it = key_words.find(itr->second.at(j)); // check if symbol exists in Re DE map
+                if(it != key_words.end() && word == itr->second.at(j))
                 {
-                    output1 = itr->second;
-                    break;
+                    output1 = itr->second.at(j);
                 }
-                it = regular_Expression.find(itr->second);
+                it = regular_Expression.find(itr->second.at(j));
                 if(it != regular_Expression.end())
                 {
-                    output2 = itr->second;
-                    break;
+                    output2 = itr->second.at(j);
                 }
-                output = itr->second;
+                if(word == itr->second.at(j) && output1== "")
+                {
+                    output3 = itr->second.at(j);
+                }
+                }
             }
     }
     if(output1 != "")
     {
         output = output1;
     }
-    else if(output2 != "")
+    else if(output3 != "")
+    {
+        output = output3;
+    }
+    else
     {
         output = output2;
     }
     std::ofstream outfile;
     outfile.open("output.txt", std::ios_base::app); // append instead of overwrite
-    outfile << output+" "+word+"\n";
+    outfile << word+" --> "+output+"\n";
     outfile.close();
 }
 
@@ -1165,9 +1170,10 @@ void read_testProgram(const char* input_file, FA mini)
 }
 int main()
 {
-   read_file("input.txt");
+    read_file("input.txt");
     FA result = language();
     FA dfa = NFAtoDFA(result);
+    vector<int> finala = dfa.get_final_to_DFA();
     FA mini = minimizedTable(minimizaion(dfa), dfa);
     read_testProgram("test.txt", mini);
     return 0;

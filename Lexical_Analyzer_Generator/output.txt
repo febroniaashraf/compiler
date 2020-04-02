@@ -1,69 +1,23 @@
-num int
-id sum
-num ,
-id count
-num ,
-relop pass
-relop ,
-id mnt
-num ;
-num while
-num (
-id pass
-id !=
-num 10
-num )
-id {
-num pass
-relop =
-num pass
-num +
-num 1
-num ;
-id }
-num int
-num sum
-num ,
-num count
-id ,
-num pass
-id ,
-id mnt
-num ;
-num while
-id (
-num pass
-num !=
-id 10
-id )
-num {
-if pass
-num =
-id pass
-id +
-num 1
-num ;
-id }
-id int
-float sum
-num ,
-id count
-num ,
-float pass
-id ,
-num mnt
-num ;
-num while
-num (
-num pass
-id !=
-id 10
-id )
-id {
-id pass
-num =
-id pass
-num +
-id 1
-num ;
-num }
+int2 --> id
+sum --> id
+, --> ,
+count --> id
+, --> ,
+pass --> id
+, --> ,
+mnt --> id
+; --> ;
+while --> 
+( --> (
+pass --> id
+!= --> relop
+10 --> num
+) --> )
+{ --> {
+pass --> id
+= --> assign
+pass --> id
++ --> addop
+1 --> num
+; --> ;
+} --> }
