@@ -909,22 +909,30 @@ map<int, vector<int> > minimizaion (FA DFA)
     vector<char> inputs = getInputs(transitions);
     vector<int> currntVector = NonFinalStates;
     vector<int> mySS;
+    map<int ,int > mmap;
     updateMapValues(1,NonFinalStates,keyOfStates);
     partitions.insert(pair<int, vector<int> >(1,NonFinalStates));
     mySS.push_back(1);
 
+
     vector<vector<int> > finalStatesRelated;
      for(int i = 0; i < finalStates.size(); i++){
+      if(!mmap.count(i)){
         vector<int> v;
         v.push_back(finalStates[i]);
-        for(int j = i + 1; j < finalStates.size(); j++){
-           if(finalStatesMap[finalStates[i]] ==  finalStatesMap[finalStates[j]]) {
+        mmap[i] = 1;
+        cout<<finalStatesMap[finalStates[i]]<<"  "<<'\n';
+        for(int j = 0; j < finalStates.size(); j++){
+           if(!mmap.count(j) && finalStatesMap[finalStates[i]] ==  finalStatesMap[finalStates[j]]) {
                 v.push_back(finalStates[j]);
-                finalStates.erase(finalStates.begin() + j);
+                mmap[j] = 1;
+                cout<<finalStatesMap[finalStates[j]] << "  "<<'\n';
         }
         }
+                cout<<"mmmmmmmmm"<<'\n';
         finalStatesRelated.push_back(v);
-        finalStates.erase(finalStates.begin()+i);
+        }
+
     }
          for(int i = 0; i < finalStatesRelated.size(); i++){
                 numberOfSets++;
@@ -1075,9 +1083,9 @@ void construct_output(string word, FA mini)
     }
     for(int i=0;i<v.size();i++)
     {
-        map<int,string>::iterator itr;
-        itr = finalStatesMap.find(v.at(i));
-        if(itr != finalStatesMap.end())
+        map<int,vector<string> >::iterator itr;
+        itr = Mini.find(v.at(i));
+        if(itr != Mini.end())
         {
             fin.push_back(v.at(i));
         }
