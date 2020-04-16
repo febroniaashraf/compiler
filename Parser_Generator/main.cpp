@@ -5,7 +5,7 @@
 #include<algorithm>
 
 using namespace std;
-
+typedef pair<string,string> pairs;
 struct Non_terminal
 {
     string name;
@@ -14,6 +14,8 @@ struct Non_terminal
 vector<Non_terminal> all_nonTerminals;
 vector<string> terminals;
 map<string, set<string> > first;
+map<string, set<string> > follow;
+map<string, set<pairs> > firstForTable;
 
 int get_nonTreminal_byName(string str)
 {
@@ -47,6 +49,8 @@ void get_first(int i, int j)
     if (is_terminal(str))
     {
         first[nonTerminal].insert(str);
+        pairs x = make_pair(str, all_nonTerminals.at(i).productions.at(j).at(0));
+        firstForTable[nonTerminal].insert(x);
         return;
     }
     int newIndex = get_nonTreminal_byName(str);
@@ -60,6 +64,15 @@ void get_first(int i, int j)
     for(it2 = s.begin(); it2 != s.end(); ++it2)
     {
         first[all_nonTerminals.at(i).name].insert(*it2);
+    }
+    set <pairs>::iterator it;
+    set<pairs> s1 = firstForTable[str];
+    for(it = s1.begin(); it != s1.end(); ++it)
+    {
+         pair<string,string> p ;
+         p.first = (*it).first;
+         p.second = all_nonTerminals.at(i).productions.at(j).at(0);
+        firstForTable[all_nonTerminals.at(i).name].insert(p);
     }
 }
 
@@ -185,6 +198,9 @@ void read_inputFile(const char* input_file)
     }
 }
 
+map<string, map<string, string>> build_table(){
+
+}
 
 int main()
 {
@@ -200,6 +216,21 @@ int main()
         {
             string str = *it2;
             cout << str << ", ";
+        }
+        cout << endl;
+        cout << "----------------------------" << endl;
+    }
+        map<string, set<pairs> >::iterator it11;
+    set <pairs>::iterator it22;
+    for(it11 = firstForTable.begin(); it11 != firstForTable.end(); ++it11)
+    {
+        std::cout << it11->first << endl;
+        set<pairs> ss = it11->second;
+        for (it22 = ss.begin(); it22 != ss.end(); ++it22)
+        {
+            //string str = *it2;
+            pair<string,string> p = *it22;
+            cout << p.first<<"  from "<<p.second << ", ";
         }
         cout << endl;
         cout << "----------------------------" << endl;
