@@ -200,8 +200,68 @@ void read_inputFile(const char* input_file)
 
 map<string, map<string, string>> build_table(){
 
-}
+    map<string, map<string, string>> table;
+    map<string, set<pairs> >::iterator TerminalIterator;
+    set <pairs>::iterator FirstIterator;
+    for(TerminalIterator = firstForTable.begin(); TerminalIterator != firstForTable.end(); ++TerminalIterator)
+    {
+        string terminal = TerminalIterator->first;
+        set<pairs> firstSet = TerminalIterator->second;
+        for (FirstIterator = firstSet.begin(); FirstIterator != firstSet.end(); ++FirstIterator)
+        {
+            pair<string,string> p = *FirstIterator;
+            table[terminal][p.first] = p.second;
+        }
+    }
 
+    map<string, set<string> >::iterator TerminalIterator2;
+    set <string>::iterator followIterator;
+    for(TerminalIterator2 = follow.begin(); TerminalIterator2 != follow.end(); ++TerminalIterator2)
+    {
+        string terminal = TerminalIterator2->first;
+        set<string> followSet = TerminalIterator2->second;
+        for (followIterator = followSet.begin(); followIterator != followSet.end(); ++followIterator)
+        {
+            string str = *followIterator;
+            if(str != "^"){
+                    bool epsilon= false;
+                int n = get_nonTreminal_byName(str);
+                struct Non_terminal non = all_nonTerminals.at(n);
+                for(int i=0;i< non.productions.size();i++){
+                    if(non.productions.at(i).at(0) == "^"){
+                        epsilon = true;
+                        break;
+                    }
+                }
+               if(epsilon){
+                table[terminal][str] = "^";
+               }
+               else{
+                table[terminal][str] = "synch";
+               }
+            }
+        }
+
+    }
+    return table;
+}
+void print_table(map<string, map<string, string>> table){
+    map<string, map<string, string>>::iterator it1;
+    map<string, string>::iterator it2;
+    for(it1 = table.begin(); it1 != table.end(); ++it1)
+    {
+        std::cout << "terminal : "<< it1->first << endl;
+         map<string, string> s = it1->second;
+        for (it2 = s.begin(); it2 != s.end(); ++it2)
+        {
+            string str = it2->first;
+            string str2 = it2->second;
+            cout << str << " :p: " << str2 << ", ";
+        }
+        cout << endl;
+        cout << "----------------------------" << endl;
+    }
+}
 int main()
 {
     read_inputFile("input.txt");
@@ -235,5 +295,11 @@ int main()
         cout << endl;
         cout << "----------------------------" << endl;
     }
+    map<string, map<string, string>> m =build_table();
+    print_table(m);
+    if(m["STATEMENT"]["+"] == ""){
+            cout << "empty" << endl;
+    }
+
     return 0;
 }
