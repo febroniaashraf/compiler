@@ -1,6 +1,7 @@
 #include <iostream>
 #include <bits/stdc++.h>
 #include <set>
+#include <regex>
 #include <iterator>
 #include<algorithm>
 
@@ -11,12 +12,13 @@ struct Non_terminal
     string name;
     vector<vector<string> > productions;
 };
+
 vector<Non_terminal> all_nonTerminals;
 vector<string> terminals;
 map<string, set<string> > first;
 map<string, set<string> > follow;
 map<string, set<pairs> > firstForTable;
-
+map<string,vector<string> > terminalsColumn;
 int get_nonTreminal_byName(string str)
 {
     for(int i=0; i<all_nonTerminals.size(); i++)
@@ -198,9 +200,9 @@ void read_inputFile(const char* input_file)
     }
 }
 
-map<string, map<string, string>> build_table(){
+map<string, map<string, string> > build_table(){
 
-    map<string, map<string, string>> table;
+    map<string, map<string, string> > table;
     map<string, set<pairs> >::iterator TerminalIterator;
     set <pairs>::iterator FirstIterator;
     for(TerminalIterator = firstForTable.begin(); TerminalIterator != firstForTable.end(); ++TerminalIterator)
@@ -245,8 +247,8 @@ map<string, map<string, string>> build_table(){
     }
     return table;
 }
-void print_table(map<string, map<string, string>> table){
-    map<string, map<string, string>>::iterator it1;
+void print_table(map<string, map<string, string> > table){
+    map<string, map<string, string> >::iterator it1;
     map<string, string>::iterator it2;
     for(it1 = table.begin(); it1 != table.end(); ++it1)
     {
@@ -262,9 +264,62 @@ void print_table(map<string, map<string, string>> table){
         cout << "----------------------------" << endl;
     }
 }
+
+ queue<string> readOutAsIn(){
+ string line;
+  queue<string> queueInputs;
+  ifstream myfile ("C:\\Users\\Osman\\Documents\\GitHub\\compiler\\Lexical_Analyzer_Generator\\output.txt");
+  regex re("(.*)( --> )(.*)");
+  smatch match;
+  if (myfile.is_open())
+  {
+    while ( getline (myfile,line) )
+    {
+    if (regex_search(line, match, re) == true) {
+      queueInputs.push(match.str(3));
+    }
+    }
+    myfile.close();
+  }
+  queueInputs.push("$");
+  return queueInputs;
+}
+
+map<string,string> leftMostDerivation(map<string, map<string, string> > table){
+   map<string, string> result;
+   std::queue<std::string> queueInputs = readOutAsIn();
+   stack<string> stackProc;
+   int counter = 10;
+   stackProc.push("$");
+   stackProc.push(all_nonTerminals.at(0).name);
+   while(queueInputs.front() != "$"){
+    if(is_terminal(stackProc.top())){
+        if(stackProc.top() == queueInputs.front()){
+            cout<< stackProc.top() << " : "<< queueInputs.front()<< endl;
+            stackProc.pop();
+            queueInputs.pop();
+            if(stackProc.top() == "$"){
+                cout<< "error2"<< endl;
+                break;
+            }
+        } else {
+        cout<< "error1"<< endl;
+        queueInputs.pop();
+        }
+    }else {
+        string ss = table[stackProc.top()][queueInputs.front()];
+        cout <<ss<< endl;
+        stackProc.pop();
+        stackProc.push(ss);
+    }
+   }
+
+   return result;
+}
 int main()
 {
     read_inputFile("input.txt");
+    readOutAsIn();
     set_first();
     map<string, set<string> >::iterator it1;
     set <string>::iterator it2;
@@ -295,11 +350,11 @@ int main()
         cout << endl;
         cout << "----------------------------" << endl;
     }
-    map<string, map<string, string>> m =build_table();
+    map<string, map<string, string> > m =build_table();
     print_table(m);
     if(m["STATEMENT"]["+"] == ""){
             cout << "empty" << endl;
     }
-
+leftMostDerivation(m);
     return 0;
 }

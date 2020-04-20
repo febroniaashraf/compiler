@@ -1,0 +1,9 @@
+# depslib dependency file v1.0
+1587359451 source:c:\users\osman\documents\github\compiler\parser_generator\main.cpp
+	<iostream>
+	<bits/stdc++.h>
+	<set>
+	<regex>
+	<iterator>
+	<algorithm>
+
