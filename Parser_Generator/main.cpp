@@ -440,9 +440,10 @@ map<string,string> leftMostDerivation(map<string, map<string, vector<string> > >
    map<string, string> result;
    std::queue<std::string> queueInputs = readOutAsIn();
    stack<string> stackProc;
+   int counter = 20;
    stackProc.push("$");
    stackProc.push(all_nonTerminals.at(0).name);
-   while(queueInputs.front() != "$"){
+   while(/*queueInputs.front()*/counter != 0){
     if(is_terminal(stackProc.top())){
         if(stackProc.top() == queueInputs.front()){
             cout<< stackProc.top() << " : "<< queueInputs.front()<< endl;
@@ -455,6 +456,9 @@ map<string,string> leftMostDerivation(map<string, map<string, vector<string> > >
         }
     }else {
         if(stackProc.top() == "^"){
+            stackProc.pop();
+        }else if(stackProc.top() == "synch"){
+            cout<< "error3"<< endl;
             stackProc.pop();
         }else{
         vector<string> ss = table[stackProc.top()][queueInputs.front()];
@@ -471,6 +475,7 @@ map<string,string> leftMostDerivation(map<string, map<string, vector<string> > >
         }
         }
     }
+    counter--;
    }
    while(stackProc.top() != "$"){
         if(is_terminal(stackProc.top())){
