@@ -200,9 +200,6 @@ void read_inputFile(const char* input_file)
     }
 }
 
-map<string, map<string, string> > build_table(){
-
-    map<string, map<string, string> > table;
 map<string, map<string, vector<string>>> build_table(){
 
     map<string, map<string, vector<string>>> table;
@@ -252,9 +249,7 @@ map<string, map<string, vector<string>>> build_table(){
     }
     return table;
 }
-void print_table(map<string, map<string, string> > table){
-    map<string, map<string, string> >::iterator it1;
-    map<string, string>::iterator it2;
+
 void print_table(map<string, map<string, vector<string>>> table){
     map<string, map<string, vector<string>>>::iterator it1;
     map<string, vector<string>>::iterator it2;
