@@ -249,7 +249,6 @@ map<string, map<string, vector<string>>> build_table(){
     }
     return table;
 }
-
 void print_table(map<string, map<string, vector<string>>> table){
     map<string, map<string, vector<string>>>::iterator it1;
     map<string, vector<string>>::iterator it2;
@@ -292,7 +291,7 @@ void print_table(map<string, map<string, vector<string>>> table){
   return queueInputs;
 }
 
-map<string,string> leftMostDerivation(map<string, map<string, string> > table){
+map<string,string> leftMostDerivation(map<string, map<string, vector<string> > > table){
    map<string, string> result;
    std::queue<std::string> queueInputs = readOutAsIn();
    stack<string> stackProc;
@@ -314,19 +313,20 @@ map<string,string> leftMostDerivation(map<string, map<string, string> > table){
         queueInputs.pop();
         }
     }else {
-        string ss = table[stackProc.top()][queueInputs.front()];
-        cout <<ss<< endl;
+        vector<string> ss = table[stackProc.top()][queueInputs.front()];
         stackProc.pop();
-        stackProc.push(ss);
+        for(int i = 0;i < ss.size(); i++){
+        stackProc.push(ss.at(i));
+        }
     }
    }
 
    return result;
 }
-int main()
+
+    int main()
 {
     read_inputFile("input.txt");
-    readOutAsIn();
     set_first();
     map<string, set<string> >::iterator it1;
     set <string>::iterator it2;
@@ -342,31 +342,12 @@ int main()
         cout << endl;
         cout << "----------------------------" << endl;
     }
-        map<string, set<pairs> >::iterator it11;
-    set <pairs>::iterator it22;
-    for(it11 = firstForTable.begin(); it11 != firstForTable.end(); ++it11)
-    {
-        std::cout << it11->first << endl;
-        set<pairs> ss = it11->second;
-        for (it22 = ss.begin(); it22 != ss.end(); ++it22)
-        {
-            //string str = *it2;
-            pair<string,string> p = *it22;
-            cout << p.first<<"  from "<<p.second << ", ";
-        }
-        cout << endl;
-        cout << "----------------------------" << endl;
-    }
-    map<string, map<string, string> > m =build_table();
-    print_table(m);
-    if(m["STATEMENT"]["+"] == ""){
-            cout << "empty" << endl;
-    }
-leftMostDerivation(m);
 
     map<string, map<string, vector<string>>> m =build_table();
     print_table(m);
-
+leftMostDerivation(m);
 
     return 0;
 }
+
+
