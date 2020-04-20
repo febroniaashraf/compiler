@@ -6,7 +6,7 @@
 #include<algorithm>
 
 using namespace std;
-typedef pair<string,string> pairs;
+typedef pair<string,vector<string>> pairs;
 struct Non_terminal
 {
     string name;
@@ -51,7 +51,7 @@ void get_first(int i, int j)
     if (is_terminal(str))
     {
         first[nonTerminal].insert(str);
-        pairs x = make_pair(str, all_nonTerminals.at(i).productions.at(j).at(0));
+        pairs x = make_pair(str, all_nonTerminals.at(i).productions.at(j));
         firstForTable[nonTerminal].insert(x);
         return;
     }
@@ -71,9 +71,9 @@ void get_first(int i, int j)
     set<pairs> s1 = firstForTable[str];
     for(it = s1.begin(); it != s1.end(); ++it)
     {
-         pair<string,string> p ;
+         pair<string,vector<string>> p ;
          p.first = (*it).first;
-         p.second = all_nonTerminals.at(i).productions.at(j).at(0);
+         p.second = all_nonTerminals.at(i).productions.at(j);
         firstForTable[all_nonTerminals.at(i).name].insert(p);
     }
 }
@@ -203,6 +203,9 @@ void read_inputFile(const char* input_file)
 map<string, map<string, string> > build_table(){
 
     map<string, map<string, string> > table;
+map<string, map<string, vector<string>>> build_table(){
+
+    map<string, map<string, vector<string>>> table;
     map<string, set<pairs> >::iterator TerminalIterator;
     set <pairs>::iterator FirstIterator;
     for(TerminalIterator = firstForTable.begin(); TerminalIterator != firstForTable.end(); ++TerminalIterator)
@@ -211,7 +214,7 @@ map<string, map<string, string> > build_table(){
         set<pairs> firstSet = TerminalIterator->second;
         for (FirstIterator = firstSet.begin(); FirstIterator != firstSet.end(); ++FirstIterator)
         {
-            pair<string,string> p = *FirstIterator;
+            pair<string,vector<string>> p = *FirstIterator;
             table[terminal][p.first] = p.second;
         }
     }
@@ -235,12 +238,14 @@ map<string, map<string, string> > build_table(){
                         break;
                     }
                 }
+                vector<string> v ;
                if(epsilon){
-                table[terminal][str] = "^";
-               }
+                    v.push_back("^");
+                }
                else{
-                table[terminal][str] = "synch";
+                    v.push_back("synch");
                }
+               table[terminal][str] = v;
             }
         }
 
@@ -250,15 +255,22 @@ map<string, map<string, string> > build_table(){
 void print_table(map<string, map<string, string> > table){
     map<string, map<string, string> >::iterator it1;
     map<string, string>::iterator it2;
+void print_table(map<string, map<string, vector<string>>> table){
+    map<string, map<string, vector<string>>>::iterator it1;
+    map<string, vector<string>>::iterator it2;
     for(it1 = table.begin(); it1 != table.end(); ++it1)
     {
         std::cout << "terminal : "<< it1->first << endl;
-         map<string, string> s = it1->second;
+         map<string, vector<string>> s = it1->second;
         for (it2 = s.begin(); it2 != s.end(); ++it2)
         {
             string str = it2->first;
-            string str2 = it2->second;
-            cout << str << " :p: " << str2 << ", ";
+            vector<string> str2 = it2->second;
+            cout << str << " :p: ";
+            for(int i=0;i<str2.size();i++){
+             cout<< str2.at(i)<< " ";
+            }
+             cout << ", ";
         }
         cout << endl;
         cout << "----------------------------" << endl;
@@ -356,5 +368,10 @@ int main()
             cout << "empty" << endl;
     }
 leftMostDerivation(m);
+
+    map<string, map<string, vector<string>>> m =build_table();
+    print_table(m);
+
+
     return 0;
 }
