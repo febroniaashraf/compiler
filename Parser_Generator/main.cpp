@@ -436,55 +436,79 @@ void print_table(map<string, map<string, vector<string>>> table){
   return queueInputs;
 }
 
-map<string,string> leftMostDerivation(map<string, map<string, vector<string> > > table){
-   map<string, string> result;
-   std::queue<std::string> queueInputs = readOutAsIn();
-   stack<string> stackProc;
-   int counter = 20;
-   stackProc.push("$");
-   stackProc.push(all_nonTerminals.at(0).name);
-   while(/*queueInputs.front()*/counter != 0){
-    if(is_terminal(stackProc.top())){
-        if(stackProc.top() == queueInputs.front()){
-            cout<< stackProc.top() << " : "<< queueInputs.front()<< endl;
-            stackProc.pop();
-            queueInputs.pop();
-            if(stackProc.top() == "$"){
-                cout<< "error2"<< endl;
+map<string,string> leftMostDerivation(map<string, map<string, vector<string> > > table)
+{
+    map<string, string> result;
+    std::queue<std::string> queueInputs = readOutAsIn();
+    stack<string> stackProc;
+    int counter = 20;
+    stackProc.push("$");
+    stackProc.push(all_nonTerminals.at(0).name);
+    while(/*queueInputs.front()*/counter != 0)
+    {
+        if(is_terminal(stackProc.top()))
+        {
+            if(stackProc.top() == queueInputs.front())
+            {
+                cout<< "accept"<< endl;
+                stackProc.pop();
+                queueInputs.pop();
+            }
+            else if(stackProc.top() == "$")
+            {
+                cout<< "error: can't complete"<< endl;
                 break;
             }
+            else
+            {
+                cout<< "error: missing "<< stackProc.top() << " inserted"<< endl;
+                stackProc.pop();
+            }
         }
-    }else {
-        if(stackProc.top() == "^"){
-            stackProc.pop();
-        }else if(stackProc.top() == "synch"){
-            cout<< "error3"<< endl;
-            stackProc.pop();
-        }else{
-        vector<string> ss = table[stackProc.top()][queueInputs.front()];
-         cout<<"top before pop  "<<ss.size()<<" "<<stackProc.top() <<" "<< queueInputs.front() << endl;
-         if(ss.size() != 0){
-        stackProc.pop();
-        for(int i = ss.size() - 1;i >= 0; i--){
-            cout<<ss.at(i)<< endl;
-        stackProc.push(ss.at(i));
+        else
+        {
+            if(stackProc.top() == "^")
+            {
+                stackProc.pop();
+            }
+            else if(stackProc.top() == "synch")
+            {
+                cout<< "error3"<< endl;
+                stackProc.pop();
+            }
+            else
+            {
+                vector<string> ss = table[stackProc.top()][queueInputs.front()];
+                if(ss.size() != 0)
+                {
+                    cout<<stackProc.top() <<" --> ";
+                    stackProc.pop();
+                    for(int i = ss.size() - 1; i >= 0; i--)
+                    {
+                        cout<<ss.at(i);
+                        stackProc.push(ss.at(i));
+                    }
+                    cout<<""<< endl;
+                }
+                else
+                {
+                    cout<<"error: illegal "<< stackProc.top() << " discord "  <<queueInputs.front()<<endl;
+                    queueInputs.pop();
+                }
+            }
         }
-        } else {
-         cout<<queueInputs.front()<< "error excess"  <<endl;
-         queueInputs.pop();
-        }
-        }
+        counter--;
     }
-    counter--;
-   }
-   while(stackProc.top() != "$"){
-        if(is_terminal(stackProc.top())){
-        cout<<stackProc.top()<< " missing "  <<endl;
+    while(stackProc.top() != "$")
+    {
+        if(is_terminal(stackProc.top()))
+        {
+            cout<<stackProc.top()<< " missing "  <<endl;
         }
         stackProc.pop();
-   }
+    }
 
-   return result;
+    return result;
 }
 
     int main()
