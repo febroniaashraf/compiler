@@ -1,6 +1,7 @@
 #include <iostream>
 #include <bits/stdc++.h>
 #include <set>
+#include <regex>
 #include <iterator>
 #include<algorithm>
 
@@ -11,12 +12,13 @@ struct Non_terminal
     string name;
     vector<vector<string> > productions;
 };
+
 vector<Non_terminal> all_nonTerminals;
 vector<string> terminals;
 map<string, set<string> > first;
 map<string, set<string> > follow;
 map<string, set<pairs> > firstForTable;
-
+map<string,vector<string> > terminalsColumn;
 int get_nonTreminal_byName(string str)
 {
     for(int i=0; i<all_nonTerminals.size(); i++)
@@ -197,7 +199,146 @@ void read_inputFile(const char* input_file)
         all_nonTerminals.push_back(non_terminal);
     }
 }
+void get_follow(string name)
+{
+    for(int i=0;i<all_nonTerminals.size();i++)
+    {
+        for(int j=0;j<all_nonTerminals.at(i).productions.size();j++)
+        {
+            vector<string> prod = all_nonTerminals.at(i).productions.at(j);
+            bool flag = false;
+            for(int k = 0;k<prod.size();k++)
+            {
+                if(prod.at(k) == name)
+                {
+                    if(k!= prod.size()-1 && is_terminal(prod.at(k+1)))
+                    {
+                        follow[name].insert(prod.at(k+1));
+                        break;
+                    }
+                    else if(k!= prod.size()-1 && !is_terminal(prod.at(k+1)))
+                    {
+                        set<string> first_of_next = first[prod.at(k+1)];
+                        set <string>::iterator it2;
+                        for(it2 = first_of_next.begin(); it2 != first_of_next.end(); ++it2)
+                        {
+                            if(*it2 != "^")
+                            {
+                                follow[name].insert(*it2);
+                            }
+                            else
+                            {
+                                flag = true;
+                            }
+                        }
+                        if(!flag)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            if(k!=prod.size()-2)
+                            {
+                                flag = false;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if(name != all_nonTerminals.at(i).name)
+                        {
+                            get_follow(all_nonTerminals.at(i).name);
+                            set<string> follows = follow[all_nonTerminals.at(i).name];
+                            set <string>::iterator it;
+                            for(it = follows.begin(); it != follows.end(); ++it)
+                            {
+                                follow[name].insert(*it);
+                            }
+                        }
+                    }
+                    if(flag)
+                    {
+                        if(name != all_nonTerminals.at(i).name)
+                        {
+                            get_follow(all_nonTerminals.at(i).name);
+                            set<string> follows = follow[all_nonTerminals.at(i).name];
+                            set <string>::iterator it;
+                            for(it = follows.begin(); it != follows.end(); ++it)
+                            {
+                                follow[name].insert(*it);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+void set_follow()
+{
+    for(int i=0;i<all_nonTerminals.size();i++)
+    {
+        string name = all_nonTerminals.at(i).name;
+        if(i==0)
+        {
+            follow[name].insert("$");
+        }
+        get_follow(name);
+    }
+}
 
+void left_recurion(vector<Non_terminal> leftFactoring)
+{
+    vector<Non_terminal> final_nonTerminals;
+    for(int i=0; i<leftFactoring.size();i++)
+    {
+        string name = leftFactoring.at(i).name;
+        bool found = false;
+        for(int j=0;j<leftFactoring.at(i).productions.size();j++)
+        {
+            string prod = leftFactoring.at(i).productions.at(j).at(0);
+            if(prod == name)
+            {
+               found = true;
+               vector<string> remove_production = leftFactoring.at(i).productions.at(j);
+               struct Non_terminal new_NonTerminal, current_NonTerminal;
+               current_NonTerminal.name = name;
+               new_NonTerminal.name = name+'\'';
+               vector<string> current_production;
+               if(leftFactoring.at(i).productions.size()==1)
+               {
+                   current_production.push_back(new_NonTerminal.name);
+                   current_NonTerminal.productions.push_back(current_production);
+               }
+               for(int k=0;k<leftFactoring.at(i).productions.size();k++)
+               {
+                    if(j!=k)
+                    {
+                        current_production = leftFactoring.at(i).productions.at(k);
+                        current_production.push_back(new_NonTerminal.name);
+                        current_NonTerminal.productions.push_back(current_production);
+                    }
+
+               }
+               final_nonTerminals.push_back(current_NonTerminal);
+               remove_production.erase(remove_production.begin());
+               remove_production.push_back(new_NonTerminal.name);
+               vector<string> epsilon;
+               epsilon.push_back("^");
+               new_NonTerminal.productions.push_back(remove_production);
+               new_NonTerminal.productions.push_back(epsilon);
+               final_nonTerminals.push_back(new_NonTerminal);
+               break;
+            }
+        }
+        if(!found)
+        {
+            final_nonTerminals.push_back(leftFactoring.at(i));
+        }
+    }
+    all_nonTerminals.clear();
+    all_nonTerminals = final_nonTerminals;
+}
 map<string, map<string, vector<string>>> build_table(){
 
     map<string, map<string, vector<string>>> table;
@@ -268,10 +409,113 @@ void print_table(map<string, map<string, vector<string>>> table){
         cout << "----------------------------" << endl;
     }
 }
-int main()
+
+ queue<string> readOutAsIn(){
+ string line;
+  queue<string> queueInputs;
+  ifstream myfile ("C:\\Users\\Osman\\Documents\\GitHub\\compiler\\Lexical_Analyzer_Generator\\output.txt");
+  regex re("(.*)( --> )(.*)");
+  smatch match;
+  if (myfile.is_open())
+  {
+    while ( getline (myfile,line) )
+    {
+    if (regex_search(line, match, re) == true) {
+      if(match.str(3) == "assign"){
+        queueInputs.push("=");
+      }else{
+      queueInputs.push(match.str(3));
+      }
+    cout<< queueInputs.back()<< " ";
+
+    }
+    }
+    myfile.close();
+  }
+  queueInputs.push("$");
+  return queueInputs;
+}
+
+map<string,string> leftMostDerivation(map<string, map<string, vector<string> > > table)
+{
+    map<string, string> result;
+    std::queue<std::string> queueInputs = readOutAsIn();
+    stack<string> stackProc;
+    int counter = 20;
+    stackProc.push("$");
+    stackProc.push(all_nonTerminals.at(0).name);
+    while(/*queueInputs.front()*/counter != 0)
+    {
+        if(is_terminal(stackProc.top()))
+        {
+            if(stackProc.top() == queueInputs.front())
+            {
+                cout<< "accept"<< endl;
+                stackProc.pop();
+                queueInputs.pop();
+            }
+            else if(stackProc.top() == "$")
+            {
+                cout<< "error: can't complete"<< endl;
+                break;
+            }
+            else
+            {
+                cout<< "error: missing "<< stackProc.top() << " inserted"<< endl;
+                stackProc.pop();
+            }
+        }
+        else
+        {
+            if(stackProc.top() == "^")
+            {
+                stackProc.pop();
+            }
+            else if(stackProc.top() == "synch")
+            {
+                cout<< "error3"<< endl;
+                stackProc.pop();
+            }
+            else
+            {
+                vector<string> ss = table[stackProc.top()][queueInputs.front()];
+                if(ss.size() != 0)
+                {
+                    cout<<stackProc.top() <<" --> ";
+                    stackProc.pop();
+                    for(int i = ss.size() - 1; i >= 0; i--)
+                    {
+                        cout<<ss.at(i);
+                        stackProc.push(ss.at(i));
+                    }
+                    cout<<""<< endl;
+                }
+                else
+                {
+                    cout<<"error: illegal "<< stackProc.top() << " discord "  <<queueInputs.front()<<endl;
+                    queueInputs.pop();
+                }
+            }
+        }
+        counter--;
+    }
+    while(stackProc.top() != "$")
+    {
+        if(is_terminal(stackProc.top()))
+        {
+            cout<<stackProc.top()<< " missing "  <<endl;
+        }
+        stackProc.pop();
+    }
+
+    return result;
+}
+
+    int main()
 {
     read_inputFile("input.txt");
     set_first();
+    set_follow();
     map<string, set<string> >::iterator it1;
     set <string>::iterator it2;
     for(it1 = first.begin(); it1 != first.end(); ++it1)
@@ -286,10 +530,29 @@ int main()
         cout << endl;
         cout << "----------------------------" << endl;
     }
+    cout << "----------------------------" << endl;
+    map<string, set<string> >::iterator it3;
+    set <string>::iterator it4;
+    for(it3 = follow.begin(); it3 != follow.end(); ++it3)
+    {
+        std::cout << it3->first << endl;
+        set<string> s = it3->second;
+        for (it4 = s.begin(); it4 != s.end(); ++it4)
+        {
+            string str = *it4;
+            cout << str << ", ";
+        }
+        cout << endl;
+        cout << "----------------------------" << endl;
+    }
+        cout << "----------------------------" << endl;
 
-    map<string, map<string, vector<string>>> m =build_table();
+    map<string, map<string, vector<string>>> m = build_table();
     print_table(m);
 
+leftMostDerivation(m);
 
     return 0;
 }
+
+
