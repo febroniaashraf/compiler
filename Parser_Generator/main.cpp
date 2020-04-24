@@ -457,10 +457,9 @@ map<string,string> leftMostDerivation(map<string, map<string, vector<string> > >
     map<string, string> result;
     std::queue<std::string> queueInputs = readOutAsIn();
     stack<string> stackProc;
-    int counter = 20;
     stackProc.push("$");
     stackProc.push(all_nonTerminals.at(0).name);
-    while(/*queueInputs.front()*/counter != 0)
+    while(queueInputs.front() != "$")
     {
         if(is_terminal(stackProc.top()))
         {
@@ -501,7 +500,7 @@ map<string,string> leftMostDerivation(map<string, map<string, vector<string> > >
                     stackProc.pop();
                     for(int i = ss.size() - 1; i >= 0; i--)
                     {
-                        cout<<ss.at(i);
+                        cout<<ss.at(i) <<" ";
                         stackProc.push(ss.at(i));
                     }
                     cout<<""<< endl;
@@ -513,7 +512,6 @@ map<string,string> leftMostDerivation(map<string, map<string, vector<string> > >
                 }
             }
         }
-        counter--;
     }
     while(stackProc.top() != "$")
     {
