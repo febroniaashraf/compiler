@@ -7,3 +7,11 @@
 	<iterator>
 	<algorithm>
 
+1587679634 source:d:\codes\compilergit\compiler\parser_generator\main.cpp
+	<iostream>
+	<bits/stdc++.h>
+	<set>
+	<regex>
+	<iterator>
+	<algorithm>
+
