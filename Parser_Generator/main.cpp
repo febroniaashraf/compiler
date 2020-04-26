@@ -756,35 +756,12 @@ map<string, map<string, vector<string>>> build_table()
     return table;
 }
 
-void print_table(map<string, map<string, vector<string>>> table)
-{
-    map<string, map<string, vector<string>>>::iterator it1;
-    map<string, vector<string>>::iterator it2;
-    for(it1 = table.begin(); it1 != table.end(); ++it1)
-    {
-        std::cout << "terminal : "<< it1->first << endl;
-        map<string, vector<string>> s = it1->second;
-        for (it2 = s.begin(); it2 != s.end(); ++it2)
-        {
-            string str = it2->first;
-            vector<string> str2 = it2->second;
-            cout << str << " :p: ";
-            for(int i=0; i<str2.size(); i++)
-            {
-                cout<< str2.at(i)<< " ";
-            }
-            cout << ", ";
-        }
-        cout << endl;
-        cout << "----------------------------" << endl;
-    }
-}
 
 queue<string> readOutAsIn()
 {
     string line;
     queue<string> queueInputs;
-    ifstream myfile ("C:\\Users\\Osman\\Documents\\GitHub\\compiler\\Lexical_Analyzer_Generator\\output.txt");
+    ifstream myfile ("D:\\codes\\compilerGit\\compiler\\Lexical_Analyzer_Generator\\output.txt");
     regex re("(.*)( --> )(.*)");
     smatch match;
     if (myfile.is_open())
@@ -813,6 +790,29 @@ void leftMostDerivation(map<string, map<string, vector<string> > > table)
 {
     std::ofstream outfile;
     outfile.open("output.txt", std::ios_base::app); // append instead of overwrite
+    outfile << "The predictive parsing table : \n\n";
+    map<string, map<string, vector<string>>>::iterator it1;
+    map<string, vector<string>>::iterator it2;
+    for(it1 = table.begin(); it1 != table.end(); ++it1)
+    {
+        outfile << "Non terminal : "<< it1->first << " --> \n";
+        map<string, vector<string>> s = it1->second;
+        for (it2 = s.begin(); it2 != s.end(); ++it2)
+        {
+            string str = it2->first;
+            vector<string> str2 = it2->second;
+            outfile <<"If "<< str << " then ";
+            for(int i=0; i<str2.size(); i++)
+            {
+                outfile<< str2.at(i)<< " ";
+            }
+
+            outfile << ", ";
+
+        }
+        outfile << "\n";
+        outfile << "----------------------------" << "\n";
+    }
     std::queue<std::string> queueInputs = readOutAsIn();
     stack<string> stackProc;
     stackProc.push("$");
@@ -904,7 +904,7 @@ int main()
     set_first();
     set_follow();
     map<string, map<string, vector<string>>> m = build_table();
-    print_table(m);
+    //print_table(m);
     leftMostDerivation(m);
     return 0;
 }
