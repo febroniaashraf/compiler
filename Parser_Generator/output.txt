@@ -51,3 +51,4 @@ If ) then ^ , If ; then ^ , If addop then ^ , If mulop then mulop FACTOR TERM'' 
 Non terminal : WHILE --> 
 If $ then synch , If float then synch , If id then synch , If if then synch , If int then synch , If while then while ( EXPRESSION ) { STATEMENT } , If } then synch , 
 ----------------------------
+

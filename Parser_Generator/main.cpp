@@ -153,9 +153,6 @@ void read_inputFile(const char* input_file)
 }
 
 
-
-
-
 int main()
 {
     read_inputFile("input.txt");
