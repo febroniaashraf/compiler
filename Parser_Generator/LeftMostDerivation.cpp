@@ -1,13 +1,12 @@
 #include "leftMostDerivation.h"
 #include <iostream>
 #include <bits/stdc++.h>
-#include <set>
 #include <regex>
-#include <iterator>
-#include<algorithm>
 #include "recource.h"
-using namespace std;
 
+/************************************************************************
+
+*************************************************************************/
 queue<string> readOutAsIn()
 {
     string line;
@@ -36,11 +35,13 @@ queue<string> readOutAsIn()
     queueInputs.push("$");
     return queueInputs;
 }
+/************************************************************************
 
+*************************************************************************/
 void leftMostDerivation(map<string, map<string, vector<string> > > table)
 {
     std::ofstream outfile;
-    outfile.open("output.txt", std::ios_base::trunc); // append instead of overwrite
+    outfile.open("output.txt", std::ios_base::trunc); // overwrite
     outfile << "The predictive parsing table : \n\n";
     map<string, map<string, vector<string>>>::iterator it1;
     map<string, vector<string>>::iterator it2;

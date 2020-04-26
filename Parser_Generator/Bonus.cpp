@@ -258,7 +258,7 @@ void left_recurion(vector<Non_terminal> leftFactoring)
                 current_NonTerminal.max_size = 0;
                 new_NonTerminal.max_size = 0;
                 current_NonTerminal.name = name;
-                new_NonTerminal.name = name+'\''+'\'';
+                new_NonTerminal.name = name+"_dash";
                 vector<string> current_production;
                 if(leftFactoring.at(i).productions.size()==1)
                 {
