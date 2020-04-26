@@ -63,8 +63,8 @@ public:
 vector<pair<string,Transition_Digrams>> tran_Digram;
 vector<Non_terminal> left_factoring(vector<Non_terminal> input)
 {
-    vector<Non_terminal> leftFactoring;
-    map<string, set< vector<string> > > modified;
+    vector<Non_terminal> leftFactoring; //left-factored grammar
+    map<string, set< vector<string> > > modified; //modified parts of the productions
     map<string, set< vector<string> > > dash_prods;
     char dash = '`';
     for(int i=0; i<input.size(); i++)
