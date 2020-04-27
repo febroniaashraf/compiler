@@ -1,4 +1,5 @@
 #include "leftMostDerivation.h"
+#include "First.h"
 #include <iostream>
 #include <bits/stdc++.h>
 #include <regex>
@@ -73,7 +74,7 @@ vector<string> leftMostDerivation(map<string, map<string, vector<string> > > tab
             // case 3: if top of stack is terminal that not equals first element in input
             else
             {
-                result.push_back( "error: missing " + stackProc.top() + " inserted");
+                result.push_back("error: missing " + stackProc.top() + " inserted");
                 stackProc.pop();
             }
         }
@@ -100,7 +101,7 @@ vector<string> leftMostDerivation(map<string, map<string, vector<string> > > tab
                 stackProc.pop();
                 for(int i = ss.size() - 1; i >= 0; i--)
                 {
-                    s = s + ss.at(i) +" ";
+                    s = s + ss.at(i) + " ";
                     stackProc.push(ss.at(i));
                 }
                 result.push_back(s);
@@ -141,16 +142,16 @@ void outputFile(vector<string> leftMost,map<string, map<string, vector<string> >
     map<string, vector<string>>::iterator it2;
     for(it1 = table.begin(); it1 != table.end(); ++it1)
     {
-        outfile << "Non terminal : "<< it1->first << " --> \n";
+        outfile << "Non terminal : " << it1->first << " --> \n";
         map<string, vector<string>> s = it1->second;
         for (it2 = s.begin(); it2 != s.end(); ++it2)
         {
             string str = it2->first;
             vector<string> str2 = it2->second;
-            outfile <<"If "<< str << " then ";
-            for(int i=0; i<str2.size(); i++)
+            outfile << "If " << str << " then ";
+            for(int i = 0; i < str2.size(); i++)
             {
-                outfile<< str2.at(i)<< " ";
+                outfile << str2.at(i)<< " ";
             }
             outfile << ", ";
         }
@@ -159,11 +160,11 @@ void outputFile(vector<string> leftMost,map<string, map<string, vector<string> >
     }
     //write LeftMostDerivation output
     outfile << "*********************************************************************************************" << "\n";
-    outfile << "Left Most Derivation Output\n";
+    outfile << "Left Most Derivation Output : \n";
     outfile << "*********************************************************************************************" << "\n";
-    for(int i = 0; i< leftMost.size(); i++)
+    for(int i = 0; i < leftMost.size(); i++)
     {
-        outfile<< leftMost.at(i)<< "\n";
+        outfile << leftMost.at(i) << "\n";
         outfile << "-----------------------------------------------------------------------------------------" << "\n";
     }
     outfile.close();

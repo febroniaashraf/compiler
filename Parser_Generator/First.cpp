@@ -1,9 +1,20 @@
 #include "First.h"
 #include "recource.h"
-#include <iostream>
-using namespace std;
-map<string, set<string> > first;
 
+map<string, set<string> > first;
+bool is_terminal (string str)
+{
+    std::vector<string>::iterator it;
+    it = std::find(terminals.begin(), terminals.end(),str);
+    if (it != terminals.end())
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
 int get_nonTreminal_byName(string str)
 {
     for(int i=0; i<all_nonTerminals.size(); i++)

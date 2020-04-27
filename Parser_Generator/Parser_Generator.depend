@@ -1,11 +1,6 @@
 # depslib dependency file v1.0
-1587959964 source:c:\users\osman\documents\github\compiler\parser_generator\main.cpp
+1587965121 source:c:\users\osman\documents\github\compiler\parser_generator\main.cpp
 	<iostream>
-	<bits/stdc++.h>
-	<set>
-	<regex>
-	<iterator>
-	<algorithm>
 	"recource.h"
 	"First.h"
 	"Follow.h"
@@ -25,56 +20,43 @@
 	"recource.h"
 	"Bonus.h"
 
-1587925748 c:\users\osman\documents\github\compiler\parser_generator\recource.h
+1587965121 c:\users\osman\documents\github\compiler\parser_generator\recource.h
 	<iostream>
+	<bits/stdc++.h>
+	<set>
+	<regex>
+	<iterator>
+	<algorithm>
 	<vector>
 	<queue>
 	<string>
 	<map>
 	<set>
 
-1587925696 c:\users\osman\documents\github\compiler\parser_generator\table.h
-	<iostream>
-	<vector>
-	<queue>
-	<string>
-	<map>
-	<set>
-
-1587959964 c:\users\osman\documents\github\compiler\parser_generator\leftmostderivation.h
+1587964853 c:\users\osman\documents\github\compiler\parser_generator\table.h
 	"recource.h"
-	<vector>
-	<queue>
-	<string>
-	<map>
 
-1587924848 c:\users\osman\documents\github\compiler\parser_generator\bonus.h
+1587964723 c:\users\osman\documents\github\compiler\parser_generator\leftmostderivation.h
+	"recource.h"
 
-1587925781 c:\users\osman\documents\github\compiler\parser_generator\first.h
-	<iostream>
-	<vector>
-	<queue>
-	<string>
-	<map>
-	<set>
+1587964853 c:\users\osman\documents\github\compiler\parser_generator\bonus.h
 
-1587925399 c:\users\osman\documents\github\compiler\parser_generator\follow.h
-	<vector>
-	<queue>
-	<string>
-	<map>
-	<set>
+1587965121 c:\users\osman\documents\github\compiler\parser_generator\first.h
+	"recource.h"
 
-1587925355 source:c:\users\osman\documents\github\compiler\parser_generator\first.cpp
+1587964775 c:\users\osman\documents\github\compiler\parser_generator\follow.h
+	"recource.h"
+
+1587965121 source:c:\users\osman\documents\github\compiler\parser_generator\first.cpp
 	"First.h"
 	"recource.h"
-	<iostream>
 
-1587925355 source:c:\users\osman\documents\github\compiler\parser_generator\folllow.cpp
+1587965151 source:c:\users\osman\documents\github\compiler\parser_generator\folllow.cpp
 	"Follow.h"
+	"First.h"
 	"recource.h"
 
-1587959964 source:c:\users\osman\documents\github\compiler\parser_generator\leftmostderivation.cpp
+1587964664 source:c:\users\osman\documents\github\compiler\parser_generator\leftmostderivation.cpp
 	"leftMostDerivation.h"
 	<iostream>
 	<bits/stdc++.h>

@@ -1,33 +1,13 @@
 #include <iostream>
-#include <bits/stdc++.h>
-#include <set>
-#include <regex>
-#include <iterator>
-#include<algorithm>
 #include "recource.h"
 #include "First.h"
 #include "Follow.h"
 #include "leftMostDerivation.h"
 #include "Bonus.h"
 #include "Table.h"
-using namespace std;
-
 
 vector<Non_terminal> all_nonTerminals;
 vector<string> terminals;
-bool is_terminal (string str)
-{
-    std::vector<string>::iterator it;
-    it = std::find(terminals.begin(), terminals.end(),str);
-    if (it != terminals.end())
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
 
 void read_inputFile(const char* input_file)
 {
