@@ -57,15 +57,15 @@ public:
             new_trans = transitions.at(i);
             cout<<"q"<<new_trans.vertex_from<<" --> q"<<new_trans.vertex_to<<" : Symbol is "<<new_trans.symbol<<endl;
         }
-        cout<<"\nThe final state is q"<<get_finalState()<<endl<<endl;
+        cout<<"\nThe final state is q"<<get_finalState()<<endl;
     }
 };
 vector<pair<string,Transition_Digrams>> tran_Digram;
 vector<Non_terminal> left_factoring(vector<Non_terminal> input)
 {
-    vector<Non_terminal> leftFactoring; //left-factored grammar
-    map<string, set< vector<string> > > modified; //modified parts of the productions
-    map<string, set< vector<string> > > dash_prods;
+    vector<Non_terminal> leftFactoring; // to store the left-factored grammar
+    map<string, set< vector<string> > > modified; // to store modified parts of the productions
+    map<string, set< vector<string> > > dash_prods; // to store the new produductions
     char dash = '`';
     for(int i=0; i<input.size(); i++)
     {
@@ -77,15 +77,16 @@ vector<Non_terminal> left_factoring(vector<Non_terminal> input)
             {
                 vector <string> prod1 = input.at(i).productions.at(j1);
                 vector <string> prod2 = input.at(i).productions.at(j2);
-                vector <string> common;
-                string newNonTerminal;
+                vector <string> common; // to store the common prefix if exists
+                string newNonTerminal; // a new non terminal for the new production
                 int pos = 0;
                 for(int k=0; k<prod1.size() && k<prod2.size(); k++)
                 {
+                    //check if there is a common prefix
                     if(prod1[k] == prod2[k])
                     {
                         common.push_back(prod1[k]);
-                        pos = k + 1;
+                        pos = k + 1; // the start position of the rest of the productions after the common prefix
                     }
                     else
                     {
@@ -96,9 +97,10 @@ vector<Non_terminal> left_factoring(vector<Non_terminal> input)
                 {
                     int n = 0;
                     bool flag = false;
-                    vector <string> epsilon, s1, s2;
+                    vector <string> epsilon, s1, s2; // to store the rest of the productions after the common prefix
                     map<string, set< vector<string> > >::iterator it1;
                     it1 = modified.find(name);
+                    // check if the common prefix already exists in the modified map to avoid creating a new non terminal for the same common prefix
                     if(!(it1 == modified.end()))
                     {
                         set< vector<string> > m = it1->second;
@@ -128,6 +130,7 @@ vector<Non_terminal> left_factoring(vector<Non_terminal> input)
                             }
                         }
                     }
+                    // create a new non terminal if there is no a non terminal for the same common prefix
                     if(!flag)
                     {
                         newNonTerminal = name + dash;
@@ -174,18 +177,20 @@ vector<Non_terminal> left_factoring(vector<Non_terminal> input)
         it1 = modified.find(name);
         if(it1 == modified.end())
         {
+            // it is a non modified rule, so simply add it to the left-factored grammar 
             nt.productions = input.at(i).productions;
             nt.max_size = input.at(i).max_size;
             leftFactoring.push_back(nt);
         }
         else
         {
+            // it is a modified rule
             set< vector<string> > m = it1->second;
             set< vector<string> >::iterator it2;
             nt.max_size = 0;
             for (it2 = m.begin(); it2 != m.end(); ++it2)
             {
-                nt.productions.push_back(*it2);
+                nt.productions.push_back(*it2); // add the modified part 
                 vector<string> v = *it2;
                 if(v.size() > nt.max_size)
                 {
@@ -208,7 +213,7 @@ vector<Non_terminal> left_factoring(vector<Non_terminal> input)
                 }
                 if(!flag)
                 {
-                    nt.productions.push_back(input.at(i).productions.at(k));
+                    nt.productions.push_back(input.at(i).productions.at(k)); // add the non modified parts
                     if(input.at(i).productions.at(k).size() > nt.max_size)
                     {
                         nt.max_size = input.at(i).productions.at(k).size();
@@ -218,6 +223,7 @@ vector<Non_terminal> left_factoring(vector<Non_terminal> input)
             leftFactoring.push_back(nt);
         }
     }
+    // add the new productions to the left-factored grammar
     map<string, set< vector<string> > >::iterator it;
     for ( it = dash_prods.begin(); it != dash_prods.end(); it++ )
     {
@@ -239,6 +245,7 @@ vector<Non_terminal> left_factoring(vector<Non_terminal> input)
     }
     return leftFactoring;
 }
+
 void left_recurion(vector<Non_terminal> leftFactoring)
 {
     vector<Non_terminal> final_nonTerminals;
@@ -363,6 +370,8 @@ void construct_transitionDigram()
         tran_Digram.push_back(digram);
     }
 }
+
+
 void print_transitionDigram()
 {
     for(int i=0; i<tran_Digram.size(); i++)
