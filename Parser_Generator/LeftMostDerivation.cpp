@@ -2,11 +2,10 @@
 #include "First.h"
 #include "recource.h"
 
-/******************************************************************************************
- *-------------------------------------- Function (1)--------------------------------------
+/**----------------------------------------------------------------------------------------
  * USEAGE : This Function reads output file from Phase 1 as an Input for LeftMostDerivation
  * RETURN : Queue of string contains The lexical analyzer
- ******************************************************************************************/
+ *-----------------------------------------------------------------------------------------*/
 
 queue<string> readOutAsIn()
 {
@@ -37,12 +36,11 @@ queue<string> readOutAsIn()
     return queueInputs;
 }
 
-/******************************************************************************************
- *-------------------------------------- Function (2)--------------------------------------
+/**----------------------------------------------------------------------------------------
  * USEAGE : LeftMostDerivation process happens here with Panic mode recovery
  * TAKE   : Predictive parsing table for the given grammar
  * RETURN : Vector represent Tracing of moves made by predictive parser for certain Input
- ******************************************************************************************/
+ *-----------------------------------------------------------------------------------------*/
 
 vector<string> leftMostDerivation(map<string, map<string, vector<string> > > table)
 {
@@ -124,11 +122,10 @@ vector<string> leftMostDerivation(map<string, map<string, vector<string> > > tab
     return result;
 }
 
-/******************************************************************************************
- *-------------------------------------- Function (3)--------------------------------------
+/**-----------------------------------------------------------------------------------------
  * USEAGE : Write the result(predictive parsing table & LeftMostDerivation output) in a file
  * TAKE   : predictive parsing table & LeftMostDerivation output
- ******************************************************************************************/
+ *------------------------------------------------------------------------------------------*/
 
 void outputFile(vector<string> leftMost,map<string, map<string, vector<string> > > table)
 {
