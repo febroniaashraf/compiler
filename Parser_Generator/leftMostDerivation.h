@@ -10,7 +10,8 @@ using std::string;
 #include <map>
 using std::map;
 queue<string> readOutAsIn();
-void leftMostDerivation(map<string, map<string, vector<string> > > );
+vector<string> leftMostDerivation(map<string, map<string, vector<string> > > );
 extern vector<Non_terminal> all_nonTerminals;
+void outputFile(vector<string> ,map<string, map<string, vector<string> > > );
 
 #endif // LEFTMOSTDERIVATION_H_INCLUDED

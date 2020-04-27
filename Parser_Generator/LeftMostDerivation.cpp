@@ -4,21 +4,23 @@
 #include <regex>
 #include "recource.h"
 
-/************************************************************************
-
-*************************************************************************/
+/******************************************************************************************
+ *-------------------------------------- Function (1)--------------------------------------
+ * USEAGE : This Function reads output file from Phase 1 as an Input for LeftMostDerivation
+ * RETURN : Queue of string contains The lexical analyzer
+ ******************************************************************************************/
 queue<string> readOutAsIn()
 {
     string line;
     queue<string> queueInputs;
-    ifstream myfile ("D:\\codes\\compilerGit\\compiler\\Lexical_Analyzer_Generator\\output.txt");
-    regex re("(.*)( --> )(.*)");
+    ifstream myfile ("C:\\Users\\Osman\\Documents\\GitHub\\compiler\\Lexical_Analyzer_Generator\\output.txt");
+    regex regexX("(.*)( --> )(.*)"); // regex according to Output file of phase1 format
     smatch match;
     if (myfile.is_open())
     {
         while ( getline (myfile,line) )
         {
-            if (regex_search(line, match, re) == true)
+            if (regex_search(line, match, regexX) == true)
             {
                 if(match.str(3) == "assign")
                 {
@@ -32,17 +34,109 @@ queue<string> readOutAsIn()
         }
         myfile.close();
     }
-    queueInputs.push("$");
+    queueInputs.push("$"); // last element in input queue is $
     return queueInputs;
 }
-/************************************************************************
 
-*************************************************************************/
-void leftMostDerivation(map<string, map<string, vector<string> > > table)
+/******************************************************************************************
+ *-------------------------------------- Function (2)--------------------------------------
+ * USEAGE : LeftMostDerivation process happens here with Panic mode recovery
+ * TAKE   : Predictive parsing table for the given grammar
+ * RETURN : Vector represent Tracing of moves made by predictive parser for certain Input
+ ******************************************************************************************/
+vector<string> leftMostDerivation(map<string, map<string, vector<string> > > table)
+{
+    vector<string> result;
+    std::queue<std::string> queueInputs = readOutAsIn();
+    stack<string> stackProc;
+    // first element in stack is $
+    stackProc.push("$");
+    // second element in stack is the start non_terminal
+    stackProc.push(all_nonTerminals.at(0).name);
+    while(queueInputs.front() != "$")
+    {
+        if(is_terminal(stackProc.top()))
+        {
+            // case 1: if top of stack is terminal that equals first element in input
+            if(stackProc.top() == queueInputs.front())
+            {
+                result.push_back("accept " + stackProc.top());
+                stackProc.pop();
+                queueInputs.pop();
+            }
+            // case 2: if top of stack is $ and input hasn't finished yet
+            else if(stackProc.top() == "$")
+            {
+                result.push_back("error: can't complete");//this make error can't be recovered
+                break;
+            }
+            // case 3: if top of stack is terminal that not equals first element in input
+            else
+            {
+                result.push_back( "error: missing " + stackProc.top() + " inserted");
+                stackProc.pop();
+            }
+        }
+        else
+        {
+            vector<string> ss = table[stackProc.top()][queueInputs.front()];
+            if(ss.size() != 0)// check table cell is if not empty
+            {
+                // case 1: if cell value is epsilon
+                if(ss.at(0) == "^")
+                {
+                    stackProc.pop();
+                }
+                // case 2: if cell value is synch
+                else if(ss.at(0) == "synch")
+                {
+                    result.push_back("error happens here");
+                    stackProc.pop();
+                }
+                // case 3: cell has Terminals or non_Terminals Values
+                else {
+                // replace the non_terminal value of the top of stack with cell value
+                string s = stackProc.top() + " --> ";
+                stackProc.pop();
+                for(int i = ss.size() - 1; i >= 0; i--)
+                {
+                    s = s + ss.at(i) +" ";
+                    stackProc.push(ss.at(i));
+                }
+                result.push_back(s);
+                }
+            }
+            else // if the cell is empty
+            {
+                result.push_back("error: illegal " + stackProc.top() + " discord "  + queueInputs.front());
+                queueInputs.pop();
+            }
+        }
+    }
+    while(stackProc.top() != "$") // stack still has values
+    {
+        if(is_terminal(stackProc.top()))
+        {
+            result.push_back(stackProc.top()+ " missing ");
+        }
+        stackProc.pop();
+    }
+    return result;
+}
+
+/******************************************************************************************
+ *-------------------------------------- Function (3)--------------------------------------
+ * USEAGE : Write the result(predictive parsing table & LeftMostDerivation output) in a file
+ * TAKE   : predictive parsing table & LeftMostDerivation output
+ ******************************************************************************************/
+void outputFile(vector<string> leftMost,map<string, map<string, vector<string> > > table)
 {
     std::ofstream outfile;
     outfile.open("output.txt", std::ios_base::trunc); // overwrite
-    outfile << "The predictive parsing table : \n\n";
+    outfile << "*********************************************************************************************" << "\n";
+    outfile << "The predictive parsing table : \n";
+    outfile << "*********************************************************************************************" << "\n";
+    //write predictive parsing table
     map<string, map<string, vector<string>>>::iterator it1;
     map<string, vector<string>>::iterator it2;
     for(it1 = table.begin(); it1 != table.end(); ++it1)
@@ -58,80 +152,19 @@ void leftMostDerivation(map<string, map<string, vector<string> > > table)
             {
                 outfile<< str2.at(i)<< " ";
             }
-
             outfile << ", ";
-
         }
         outfile << "\n";
-        outfile << "----------------------------" << "\n";
+        outfile << "-----------------------------------------------------------------------------------------" << "\n";
     }
-    std::queue<std::string> queueInputs = readOutAsIn();
-    stack<string> stackProc;
-    stackProc.push("$");
-    stackProc.push(all_nonTerminals.at(0).name);
-    while(queueInputs.front() != "$")
+    //write LeftMostDerivation output
+    outfile << "*********************************************************************************************" << "\n";
+    outfile << "Left Most Derivation Output\n";
+    outfile << "*********************************************************************************************" << "\n";
+    for(int i = 0; i< leftMost.size(); i++)
     {
-        if(is_terminal(stackProc.top()) && stackProc.top()!="^")
-        {
-            if(stackProc.top() == queueInputs.front())
-            {
-                outfile << "accept " + stackProc.top() + "\n";
-                stackProc.pop();
-                queueInputs.pop();
-            }
-            else if(stackProc.top() == "$")
-            {
-                outfile << "error: can't complete" ;
-                break;
-            }
-            else
-            {
-                outfile<< "error: missing " + stackProc.top() + " inserted" +"\n";
-                stackProc.pop();
-            }
-        }
-        else
-        {
-            if(stackProc.top() == "^")
-            {
-                stackProc.pop();
-            }
-            else if(stackProc.top() == "synch")
-            {
-                outfile << "error3" ;
-                stackProc.pop();
-            }
-            else
-            {
-                vector<string> ss = table[stackProc.top()][queueInputs.front()];
-                if(ss.size() != 0)
-                {
-                    outfile <<stackProc.top() + " --> ";
-                    stackProc.pop();
-                    for(int i = ss.size() - 1; i >= 0; i--)
-                    {
-                        outfile <<ss.at(i) +" ";
-                        stackProc.push(ss.at(i));
-                    }
-                    outfile<<"\n";
-                }
-                else
-                {
-                    outfile<<"error: illegal "<< stackProc.top() + " discord "  +queueInputs.front() + "\n";
-                    queueInputs.pop();
-                }
-            }
-        }
+        outfile<< leftMost.at(i)<< "\n";
+        outfile << "-----------------------------------------------------------------------------------------" << "\n";
     }
-    while(stackProc.top() != "$")
-    {
-        if(is_terminal(stackProc.top()))
-        {
-            outfile <<stackProc.top()+ " missing " +"\n";
-        }
-        stackProc.pop();
-    }
-
     outfile.close();
-
 }

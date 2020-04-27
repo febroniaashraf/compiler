@@ -165,6 +165,7 @@ int main()
     set_follow();
     map<string, map<string, vector<string>>> m = build_table();
     //print_table(m);
-    leftMostDerivation(m);
+    vector<string> v = leftMostDerivation(m);
+    outputFile(v,m);
     return 0;
 }

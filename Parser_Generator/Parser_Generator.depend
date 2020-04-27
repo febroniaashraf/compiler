@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1587926460 source:c:\users\osman\documents\github\compiler\parser_generator\main.cpp
+1587959964 source:c:\users\osman\documents\github\compiler\parser_generator\main.cpp
 	<iostream>
 	<bits/stdc++.h>
 	<set>
@@ -21,7 +21,7 @@
 	<iterator>
 	<algorithm>
 
-1587928100 source:c:\users\osman\documents\github\compiler\parser_generator\bonus.cpp
+1587941916 source:c:\users\osman\documents\github\compiler\parser_generator\bonus.cpp
 	"recource.h"
 	"Bonus.h"
 
@@ -41,7 +41,7 @@
 	<map>
 	<set>
 
-1587919124 c:\users\osman\documents\github\compiler\parser_generator\leftmostderivation.h
+1587959964 c:\users\osman\documents\github\compiler\parser_generator\leftmostderivation.h
 	"recource.h"
 	<vector>
 	<queue>
@@ -74,14 +74,11 @@
 	"Follow.h"
 	"recource.h"
 
-1587928100 source:c:\users\osman\documents\github\compiler\parser_generator\leftmostderivation.cpp
+1587959964 source:c:\users\osman\documents\github\compiler\parser_generator\leftmostderivation.cpp
 	"leftMostDerivation.h"
 	<iostream>
 	<bits/stdc++.h>
-	<set>
 	<regex>
-	<iterator>
-	<algorithm>
 	"recource.h"
 
 1587925748 source:c:\users\osman\documents\github\compiler\parser_generator\table.cpp
