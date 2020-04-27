@@ -86,6 +86,7 @@ void get_follow(string name)
         }
     }
 }
+
 /**----------------------------------------------------------------------------------------
  * USEAGE :  build the follow set of each nonterminal as it calls the function get_follow
  *----------------------------------------------------------------------------------------*/

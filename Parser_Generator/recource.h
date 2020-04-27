@@ -37,4 +37,5 @@ struct Non_terminal
 extern vector<Non_terminal> all_nonTerminals;
 extern vector<string> terminals;
 
+
 #endif // RECOURCE_H_INCLUDED
