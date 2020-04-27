@@ -57,7 +57,7 @@ public:
             new_trans = transitions.at(i);
             cout<<"q"<<new_trans.vertex_from<<" --> q"<<new_trans.vertex_to<<" : Symbol is "<<new_trans.symbol<<endl;
         }
-        cout<<"\nThe final state is q"<<get_finalState()<<endl;
+        cout<<"\nThe final state is q"<<get_finalState()<<endl<<endl;
     }
 };
 vector<pair<string,Transition_Digrams>> tran_Digram;
@@ -239,7 +239,6 @@ vector<Non_terminal> left_factoring(vector<Non_terminal> input)
     }
     return leftFactoring;
 }
-
 void left_recurion(vector<Non_terminal> leftFactoring)
 {
     vector<Non_terminal> final_nonTerminals;
@@ -364,8 +363,6 @@ void construct_transitionDigram()
         tran_Digram.push_back(digram);
     }
 }
-
-
 void print_transitionDigram()
 {
     for(int i=0; i<tran_Digram.size(); i++)

@@ -8,7 +8,6 @@
 
 vector<Non_terminal> all_nonTerminals;
 vector<string> terminals;
-
 void read_inputFile(const char* input_file)
 {
     fstream newfile;
@@ -131,8 +130,6 @@ void read_inputFile(const char* input_file)
         all_nonTerminals.push_back(non_terminal);
     }
 }
-
-
 int main()
 {
     read_inputFile("input.txt");

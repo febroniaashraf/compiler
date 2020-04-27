@@ -1,8 +1,5 @@
 #include "leftMostDerivation.h"
 #include "First.h"
-#include <iostream>
-#include <bits/stdc++.h>
-#include <regex>
 #include "recource.h"
 
 /******************************************************************************************
@@ -10,6 +7,7 @@
  * USEAGE : This Function reads output file from Phase 1 as an Input for LeftMostDerivation
  * RETURN : Queue of string contains The lexical analyzer
  ******************************************************************************************/
+
 queue<string> readOutAsIn()
 {
     string line;
@@ -45,6 +43,7 @@ queue<string> readOutAsIn()
  * TAKE   : Predictive parsing table for the given grammar
  * RETURN : Vector represent Tracing of moves made by predictive parser for certain Input
  ******************************************************************************************/
+
 vector<string> leftMostDerivation(map<string, map<string, vector<string> > > table)
 {
     vector<string> result;
@@ -130,6 +129,7 @@ vector<string> leftMostDerivation(map<string, map<string, vector<string> > > tab
  * USEAGE : Write the result(predictive parsing table & LeftMostDerivation output) in a file
  * TAKE   : predictive parsing table & LeftMostDerivation output
  ******************************************************************************************/
+
 void outputFile(vector<string> leftMost,map<string, map<string, vector<string> > > table)
 {
     std::ofstream outfile;
@@ -153,7 +153,7 @@ void outputFile(vector<string> leftMost,map<string, map<string, vector<string> >
             {
                 outfile << str2.at(i)<< " ";
             }
-            outfile << ", ";
+            outfile << "\n";
         }
         outfile << "\n";
         outfile << "-----------------------------------------------------------------------------------------" << "\n";

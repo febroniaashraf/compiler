@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1587965121 source:c:\users\osman\documents\github\compiler\parser_generator\main.cpp
+1587967772 source:c:\users\osman\documents\github\compiler\parser_generator\main.cpp
 	<iostream>
 	"recource.h"
 	"First.h"
@@ -16,11 +16,11 @@
 	<iterator>
 	<algorithm>
 
-1587941916 source:c:\users\osman\documents\github\compiler\parser_generator\bonus.cpp
+1587967896 source:c:\users\osman\documents\github\compiler\parser_generator\bonus.cpp
 	"recource.h"
 	"Bonus.h"
 
-1587965121 c:\users\osman\documents\github\compiler\parser_generator\recource.h
+1587965857 c:\users\osman\documents\github\compiler\parser_generator\recource.h
 	<iostream>
 	<bits/stdc++.h>
 	<set>
@@ -41,26 +41,24 @@
 
 1587964853 c:\users\osman\documents\github\compiler\parser_generator\bonus.h
 
-1587965121 c:\users\osman\documents\github\compiler\parser_generator\first.h
+1587965935 c:\users\osman\documents\github\compiler\parser_generator\first.h
 	"recource.h"
 
-1587964775 c:\users\osman\documents\github\compiler\parser_generator\follow.h
+1587965765 c:\users\osman\documents\github\compiler\parser_generator\follow.h
 	"recource.h"
 
-1587965121 source:c:\users\osman\documents\github\compiler\parser_generator\first.cpp
+1587967772 source:c:\users\osman\documents\github\compiler\parser_generator\first.cpp
 	"First.h"
 	"recource.h"
 
-1587965151 source:c:\users\osman\documents\github\compiler\parser_generator\folllow.cpp
+1587967772 source:c:\users\osman\documents\github\compiler\parser_generator\folllow.cpp
 	"Follow.h"
 	"First.h"
 	"recource.h"
 
-1587964664 source:c:\users\osman\documents\github\compiler\parser_generator\leftmostderivation.cpp
+1587967772 source:c:\users\osman\documents\github\compiler\parser_generator\leftmostderivation.cpp
 	"leftMostDerivation.h"
-	<iostream>
-	<bits/stdc++.h>
-	<regex>
+	"First.h"
 	"recource.h"
 
 1587925748 source:c:\users\osman\documents\github\compiler\parser_generator\table.cpp

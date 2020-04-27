@@ -1,6 +1,5 @@
 #include "First.h"
 #include "recource.h"
-
 map<string, set<string> > first;
 bool is_terminal (string str)
 {
