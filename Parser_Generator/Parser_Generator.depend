@@ -66,3 +66,62 @@
 	"recource.h"
 	"First.h"
 
+1588187916 source:h:\github\compiler\parser_generator\bonus.cpp
+	"recource.h"
+	"Bonus.h"
+
+1588187916 h:\github\compiler\parser_generator\recource.h
+	<iostream>
+	<bits/stdc++.h>
+	<set>
+	<regex>
+	<iterator>
+	<algorithm>
+	<vector>
+	<queue>
+	<string>
+	<map>
+	<set>
+
+1588187916 h:\github\compiler\parser_generator\bonus.h
+
+1588187916 source:h:\github\compiler\parser_generator\first.cpp
+	"First.h"
+	"recource.h"
+
+1588187916 h:\github\compiler\parser_generator\first.h
+	"recource.h"
+
+1588187916 source:h:\github\compiler\parser_generator\folllow.cpp
+	"Follow.h"
+	"First.h"
+	"recource.h"
+
+1588187916 h:\github\compiler\parser_generator\follow.h
+	"recource.h"
+
+1588187916 source:h:\github\compiler\parser_generator\main.cpp
+	<iostream>
+	"recource.h"
+	"First.h"
+	"Follow.h"
+	"leftMostDerivation.h"
+	"Bonus.h"
+	"Table.h"
+
+1588187916 h:\github\compiler\parser_generator\leftmostderivation.h
+	"recource.h"
+
+1588187916 h:\github\compiler\parser_generator\table.h
+	"recource.h"
+
+1588187916 source:h:\github\compiler\parser_generator\table.cpp
+	"Table.h"
+	"recource.h"
+	"First.h"
+
+1588188188 source:h:\github\compiler\parser_generator\leftmostderivation.cpp
+	"leftMostDerivation.h"
+	"First.h"
+	"recource.h"
+

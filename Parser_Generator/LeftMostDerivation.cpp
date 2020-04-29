@@ -11,7 +11,7 @@ queue<string> readOutAsIn()
 {
     string line;
     queue<string> queueInputs;
-    ifstream myfile ("C:\\Users\\Osman\\Documents\\GitHub\\compiler\\Lexical_Analyzer_Generator\\output.txt");
+    ifstream myfile ("H:\\GitHub\\Compiler\\Lexical_Analyzer_Generator\\output.txt");
     regex regexX("(.*)( --> )(.*)"); // regex according to Output file of phase1 format
     smatch match;
     if (myfile.is_open())
