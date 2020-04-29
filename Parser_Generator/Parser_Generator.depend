@@ -100,7 +100,7 @@
 1588187916 h:\github\compiler\parser_generator\follow.h
 	"recource.h"
 
-1588187916 source:h:\github\compiler\parser_generator\main.cpp
+1588200346 source:h:\github\compiler\parser_generator\main.cpp
 	<iostream>
 	"recource.h"
 	"First.h"
@@ -120,7 +120,7 @@
 	"recource.h"
 	"First.h"
 
-1588188188 source:h:\github\compiler\parser_generator\leftmostderivation.cpp
+1588201306 source:h:\github\compiler\parser_generator\leftmostderivation.cpp
 	"leftMostDerivation.h"
 	"First.h"
 	"recource.h"

@@ -99,7 +99,10 @@ void construct_output(string word, FA mini)
         output = output2;
     }
     std::ofstream outfile;
-    outfile.open("output.txt", std::ios_base::app); // append instead of overwrite
+    string file_path = __FILE__;
+    string dir_path = file_path.substr(0, file_path.rfind("\\"));
+    string dir_path2 = dir_path.substr(0, dir_path.rfind("\\"));
+    outfile.open(dir_path2+"\\output_phase1.txt", std::ios_base::app); // append instead of overwrite
     outfile << word+" --> "+output+"\n";
     outfile.close();
 }

@@ -16,15 +16,15 @@
 	<bits/stdc++.h>
 	<algorithm>
 
-1588195625 source:h:\github\compiler\lexical_analyzer_generator\main.cpp
+1588200196 source:h:\github\compiler\lexical_analyzer_generator\main.cpp
 	<iostream>
 	"recource.h"
-	"ClassFA.h"
-	"Functions.h"
-	"ReadInputFile.h"
-	"DFA.h"
-	"Minimization.h"
-	"OutputFile.h"
+	"ClassFA.cpp"
+	"Functions.cpp"
+	"ReadInputFile.cpp"
+	"DFA.cpp"
+	"Minimization.cpp"
+	"OutputFile.cpp"
 
 1588194762 h:\github\compiler\lexical_analyzer_generator\recource.h
 	<iostream>
@@ -61,4 +61,34 @@
 
 1588199264 h:\github\compiler\lexical_analyzer_generator\classfa.h
 	"recource.h"
+
+1588199175 h:\github\compiler\lexical_analyzer_generator\classfa.cpp
+	"ClassFA.h"
+	"recource.h"
+
+1588196401 h:\github\compiler\lexical_analyzer_generator\functions.cpp
+	"Functions.h"
+	"recource.h"
+	"ClassFA.h"
+
+1588197647 h:\github\compiler\lexical_analyzer_generator\readinputfile.cpp
+	"ReadInputFile.h"
+	"recource.h"
+	"ClassFA.h"
+	"Functions.h"
+
+1588197021 h:\github\compiler\lexical_analyzer_generator\dfa.cpp
+	"DFA.h"
+	"recource.h"
+	"ClassFA.h"
+
+1588197853 h:\github\compiler\lexical_analyzer_generator\minimization.cpp
+	"Minimization.h"
+	"recource.h"
+	"ClassFA.h"
+
+1588201057 h:\github\compiler\lexical_analyzer_generator\outputfile.cpp
+	"OutputFile.h"
+	"recource.h"
+	"ClassFA.h"
 
