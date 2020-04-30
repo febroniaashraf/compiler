@@ -3,8 +3,8 @@
 #include "recource.h"
 
 queue<string> readOutAsIn();
-vector<string> leftMostDerivation(map<string, map<string, vector<string> > > );
+vector<string> leftMostDerivation(map<string, map<string, vector<string>>>);
 extern vector<Non_terminal> all_nonTerminals;
-void outputFile(vector<string> ,map<string, map<string, vector<string> > > );
+void outputFile(vector<string> ,map<string, map<string, vector<string>>>);
 
 #endif // LEFTMOSTDERIVATION_H_INCLUDED

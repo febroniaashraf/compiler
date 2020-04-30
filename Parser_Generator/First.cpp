@@ -24,7 +24,7 @@ int get_nonTreminal_byName(string str) // get the index of a certain non termina
         }
     }
 }
-void get_first(int i, int j) // a recursive function. 
+void get_first(int i, int j) // a recursive function.
 {
     // i is the index of a non terminal in all_nonTerminals , j is the index of its first production.
     string nonTerminal = all_nonTerminals.at(i).name;
@@ -37,7 +37,7 @@ void get_first(int i, int j) // a recursive function.
         firstForTable[nonTerminal].insert(x);
         return;
     }
-    // it is a non terminal. 
+    // it is a non terminal.
     int newIndex = get_nonTreminal_byName(str); // get the index of the non terminal.
     nonTerminal = all_nonTerminals.at(newIndex).name;
     for (int k = 0 ;  k < all_nonTerminals.at(newIndex).productions.size(); k++)

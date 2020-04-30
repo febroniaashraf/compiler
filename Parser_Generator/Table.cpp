@@ -63,5 +63,3 @@ map<string, map<string, vector<string>>> build_table()
     }
     return table;
 }
-
-

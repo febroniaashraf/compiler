@@ -30,7 +30,7 @@ struct transition
 struct Non_terminal
 {
     string name;
-    vector<vector<string> > productions;
+    vector<vector<string>> productions;
     int max_size;
 };
 
