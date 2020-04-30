@@ -87,7 +87,30 @@ void updateMapValues(int value,vector<int> v, std::map<int, int> &keyOfStates)
         keyOfStates[v.at(i)] = value;
     }
 }
-
+vector<vector<int>> separateFinalStates(vector<int> finalStates)
+{
+    map<int,int > mmap;
+    vector<vector<int> > finalStatesRelated;
+    for(int i = 0; i < finalStates.size(); i++)
+    {
+        if(!mmap.count(i))
+        {
+            vector<int> v;
+            v.push_back(finalStates[i]);
+            mmap[i] = 1;
+            for(int j = 0; j < finalStates.size(); j++)
+            {
+                if(!mmap.count(j) && finalStatesMap[finalStates[i]] ==  finalStatesMap[finalStates[j]])
+                {
+                    v.push_back(finalStates[j]);
+                    mmap[j] = 1;
+                }
+            }
+            finalStatesRelated.push_back(v);
+        }
+    }
+    return finalStatesRelated;
+}
 /**-----------------------------------------------------------------------------------------
  * USEAGE : Build the follow set of each nonterminal
  * Take   : production to each nonterminal
@@ -109,27 +132,12 @@ map<int, vector<int> > minimizaion (FA DFA)
     vector<int> NonFinalStates = getNonFinalStates(vertices,finalStates);
     vector<char> inputs = getInputs(transitions);
     vector<int> currntVector = NonFinalStates;
+    vector<vector<int>> finalStatesRelated = separateFinalStates(finalStates);
     vector<int> mySS;
-    map<int ,int > mmap;
     updateMapValues(1,NonFinalStates,keyOfStates);
     partitions.insert(pair<int, vector<int> >(1,NonFinalStates));
     mySS.push_back(1);
 
-    vector<vector<int> > finalStatesRelated;
-     for(int i = 0; i < finalStates.size(); i++){
-      if(!mmap.count(i)){
-        vector<int> v;
-        v.push_back(finalStates[i]);
-        mmap[i] = 1;
-        for(int j = 0; j < finalStates.size(); j++){
-           if(!mmap.count(j) && finalStatesMap[finalStates[i]] ==  finalStatesMap[finalStates[j]]) {
-                v.push_back(finalStates[j]);
-                mmap[j] = 1;
-        }
-        }
-        finalStatesRelated.push_back(v);
-        }
-    }
          for(int i = 0; i < finalStatesRelated.size(); i++){
                 numberOfSets++;
                 updateMapValues(numberOfSets,finalStatesRelated[i],keyOfStates);
