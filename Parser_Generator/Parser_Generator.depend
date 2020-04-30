@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1588015517 source:c:\users\osman\documents\github\compiler\parser_generator\main.cpp
+1588229553 source:c:\users\osman\documents\github\compiler\parser_generator\main.cpp
 	<iostream>
 	"recource.h"
 	"First.h"
@@ -16,11 +16,11 @@
 	<iterator>
 	<algorithm>
 
-1588004280 source:c:\users\osman\documents\github\compiler\parser_generator\bonus.cpp
+1588229553 source:c:\users\osman\documents\github\compiler\parser_generator\bonus.cpp
 	"recource.h"
 	"Bonus.h"
 
-1588003980 c:\users\osman\documents\github\compiler\parser_generator\recource.h
+1588229553 c:\users\osman\documents\github\compiler\parser_generator\recource.h
 	<iostream>
 	<bits/stdc++.h>
 	<set>
@@ -33,21 +33,21 @@
 	<map>
 	<set>
 
-1587964853 c:\users\osman\documents\github\compiler\parser_generator\table.h
+1588229553 c:\users\osman\documents\github\compiler\parser_generator\table.h
 	"recource.h"
 
-1587964723 c:\users\osman\documents\github\compiler\parser_generator\leftmostderivation.h
+1588229553 c:\users\osman\documents\github\compiler\parser_generator\leftmostderivation.h
 	"recource.h"
 
-1588003784 c:\users\osman\documents\github\compiler\parser_generator\bonus.h
+1588229553 c:\users\osman\documents\github\compiler\parser_generator\bonus.h
 
-1588004064 c:\users\osman\documents\github\compiler\parser_generator\first.h
+1588229553 c:\users\osman\documents\github\compiler\parser_generator\first.h
 	"recource.h"
 
-1587965765 c:\users\osman\documents\github\compiler\parser_generator\follow.h
+1588229553 c:\users\osman\documents\github\compiler\parser_generator\follow.h
 	"recource.h"
 
-1588003604 source:c:\users\osman\documents\github\compiler\parser_generator\first.cpp
+1588229553 source:c:\users\osman\documents\github\compiler\parser_generator\first.cpp
 	"First.h"
 	"recource.h"
 
@@ -61,7 +61,7 @@
 	"First.h"
 	"recource.h"
 
-1587925748 source:c:\users\osman\documents\github\compiler\parser_generator\table.cpp
+1588229553 source:c:\users\osman\documents\github\compiler\parser_generator\table.cpp
 	"Table.h"
 	"recource.h"
 	"First.h"
