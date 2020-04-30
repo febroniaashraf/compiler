@@ -77,8 +77,8 @@ vector<pair<string,Transition_Digrams>> tran_Digram;
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**----------------------------------------------------------------------------------------
- * USEAGE : This Function reads output file from Phase 1 as an Input for LeftMostDerivation
- * TAKE   : Queue of string contains The lexical analyzer
+ * USEAGE : Read the input file which contains grammar
+ * TAKE   : File name
  *-----------------------------------------------------------------------------------------*/
 
 void read_inputFile(const char* input_file)
@@ -205,8 +205,7 @@ void read_inputFile(const char* input_file)
 }
 
 /**----------------------------------------------------------------------------------------
- * USEAGE : This Function reads output file from Phase 1 as an Input for LeftMostDerivation
- * TAKE   : Queue of string contains The lexical analyzer
+ * USEAGE : build transition diagrams for each nonterminal of the grammar
  *-----------------------------------------------------------------------------------------*/
 void construct_transitionDigram()
 {
@@ -275,8 +274,7 @@ void construct_transitionDigram()
 }
 
 /**----------------------------------------------------------------------------------------
- * USEAGE : This Function reads output file from Phase 1 as an Input for LeftMostDerivation
- * TAKE   : Queue of string contains The lexical analyzer
+ * USEAGE : Print transition diagrams for each nonterminal of the grammar
  *-----------------------------------------------------------------------------------------*/
 void print_transitionDigram()
 {
