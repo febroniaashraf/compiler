@@ -11,7 +11,10 @@ queue<string> readOutAsIn()
 {
     string line;
     queue<string> queueInputs;
-    ifstream myfile ("C:\\Users\\Osman\\Documents\\GitHub\\compiler\\Lexical_Analyzer_Generator\\output.txt");
+    string file_path = __FILE__;
+    string dir_path = file_path.substr(0, file_path.rfind("\\"));
+    string dir_path2 = dir_path.substr(0, dir_path.rfind("\\"));
+    ifstream myfile (dir_path2+"\\output_phase1.txt");
     regex regexX("(.*)( --> )(.*)"); // regex according to Output file of phase1 format
     smatch match;
     if (myfile.is_open())
@@ -130,7 +133,10 @@ vector<string> leftMostDerivation(map<string, map<string, vector<string> > > tab
 void outputFile(vector<string> leftMost,map<string, map<string, vector<string> > > table)
 {
     std::ofstream outfile;
-    outfile.open("output.txt", std::ios_base::trunc); // overwrite
+    string file_path = __FILE__;
+    string dir_path = file_path.substr(0, file_path.rfind("\\"));
+    string dir_path2 = dir_path.substr(0, dir_path.rfind("\\"));
+    outfile.open(dir_path2+"\\output_phase2.txt", std::ios_base::trunc); // overwrite
     outfile << "*********************************************************************************************" << "\n";
     outfile << "The predictive parsing table : \n";
     outfile << "*********************************************************************************************" << "\n";
