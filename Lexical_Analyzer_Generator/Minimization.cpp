@@ -1,13 +1,14 @@
 #include "Minimization.h"
 #include "recource.h"
 #include "ClassFA.h"
-
+////////////////////////////////////////////////////////////////////////////////////////////
+//
 map<int,vector<string> > Mini;
 
 /**-----------------------------------------------------------------------------------------
- * USEAGE : Build the follow set of each nonterminal
- * Take   : production to each nonterminal
- * RETURN :
+ * USEAGE : get Non_Final states from the difference between all the states and final states
+ * Take   : all the states and final states
+ * RETURN : Non_Final states
  *-----------------------------------------------------------------------------------------*/
 
 vector<int> getNonFinalStates(vector<int> first, vector<int> second)
@@ -21,13 +22,12 @@ vector<int> getNonFinalStates(vector<int> first, vector<int> second)
     it=std::set_difference (first.begin(), first.end(), second.begin(), second.end(), v.begin());
     v.resize(it-v.begin());
     return v;
-
 }
 
 /**-----------------------------------------------------------------------------------------
- * USEAGE : Build the follow set of each nonterminal
- * Take   : production to each nonterminal
- * RETURN :
+ * USEAGE : get inputs of all the transitions
+ * Take   : transitions
+ * RETURN : all possible inputs
  *-----------------------------------------------------------------------------------------*/
 
 vector<char> getInputs(vector<transition> transitions)
@@ -54,9 +54,9 @@ vector<char> getInputs(vector<transition> transitions)
 }
 
 /**-----------------------------------------------------------------------------------------
- * USEAGE : Build the follow set of each nonterminal
- * Take   : production to each nonterminal
- * RETURN :
+ * USEAGE : get all the next state partitions with given inputs in a certain order
+ * Take   : current state, transitions, inputs, map tells which partition next state is
+ * RETURN : partitions where all the next state exist
  *-----------------------------------------------------------------------------------------*/
 
 string findNextStats (int state, vector<transition> transitions, vector<char> inputs,map<int, int> keyOfStates)
@@ -76,8 +76,8 @@ string findNextStats (int state, vector<transition> transitions, vector<char> in
 }
 
 /**-----------------------------------------------------------------------------------------
- * USEAGE : Build the follow set of each nonterminal
- * Take   : production to each nonterminal
+ * USEAGE : Update the map that tells which partition next state is
+ * Take   : number of new partition, element of that partition , map to update
  *-----------------------------------------------------------------------------------------*/
 
 void updateMapValues(int value,vector<int> v, std::map<int, int> &keyOfStates)
@@ -87,23 +87,29 @@ void updateMapValues(int value,vector<int> v, std::map<int, int> &keyOfStates)
         keyOfStates[v.at(i)] = value;
     }
 }
+
+/**-----------------------------------------------------------------------------------------
+ * USEAGE : collect FinalStates with the same category together
+ * Take   : final states
+ * RETURN : Related final states
+ *-----------------------------------------------------------------------------------------*/
 vector<vector<int>> separateFinalStates(vector<int> finalStates)
 {
-    map<int,int > mmap;
+    map<int,int > collectRelater;
     vector<vector<int> > finalStatesRelated;
     for(int i = 0; i < finalStates.size(); i++)
     {
-        if(!mmap.count(i))
+        if(!collectRelater.count(i))
         {
             vector<int> v;
             v.push_back(finalStates[i]);
-            mmap[i] = 1;
+            collectRelater[i] = 1;
             for(int j = 0; j < finalStates.size(); j++)
             {
-                if(!mmap.count(j) && finalStatesMap[finalStates[i]] ==  finalStatesMap[finalStates[j]])
+                if(!collectRelater.count(j) && finalStatesMap[finalStates[i]] ==  finalStatesMap[finalStates[j]])
                 {
                     v.push_back(finalStates[j]);
-                    mmap[j] = 1;
+                    collectRelater[j] = 1;
                 }
             }
             finalStatesRelated.push_back(v);
@@ -112,45 +118,59 @@ vector<vector<int>> separateFinalStates(vector<int> finalStates)
     return finalStatesRelated;
 }
 /**-----------------------------------------------------------------------------------------
- * USEAGE : Build the follow set of each nonterminal
- * Take   : production to each nonterminal
- * RETURN :
+ * USEAGE : initialize partitions, whichPartition and keyOfStates
+ * Take   : whichPartition turn, partitions, Non_Final states,Related final States,
+            map tells which partition next state is
+ * RETURN : the last number assign to partition
+ *-----------------------------------------------------------------------------------------*/
+int  initial_values(queue<int> &whichPartition,map<int,vector<int> > &partitions,vector<int> &NonFinalStates, vector<vector<int>> &finalStatesRelated, std::map<int, int> &keyOfStates){
+    int numberOfSets = 1;
+    updateMapValues(numberOfSets,NonFinalStates,keyOfStates);
+    partitions.insert(pair<int, vector<int> >(numberOfSets,NonFinalStates));
+    whichPartition.push(numberOfSets);
+
+    for(int i = 0; i < finalStatesRelated.size(); i++)
+    {
+        numberOfSets++;
+        updateMapValues(numberOfSets,finalStatesRelated[i],keyOfStates);
+        partitions.insert(pair<int, vector<int> >(numberOfSets,finalStatesRelated[i]));
+        whichPartition.push(numberOfSets);
+    }
+    return numberOfSets;
+}
+
+/**-----------------------------------------------------------------------------------------
+ * USEAGE : minimization process using partitioning method
+ * Take   : DFA result
+ * RETURN : final partitions that can be treated as one state
  *-----------------------------------------------------------------------------------------*/
 
 map<int, vector<int> > minimizaion (FA DFA)
 {
-    int numberOfSets = 1;
     int counter = 0;
-    int whichPartition = 1;
 
+    map<int, int> keyOfStates;
     map<string,vector<int> > pre_result;
-    std::map<int, int> keyOfStates;
     map<int,vector<int> > partitions;
-    vector<transition> transitions = DFA.get_tran();
-    vector<int> finalStates = DFA.get_final_to_DFA();
-    vector<int> vertices = DFA.get_vertices();
-    vector<int> NonFinalStates = getNonFinalStates(vertices,finalStates);
-    vector<char> inputs = getInputs(transitions);
-    vector<int> currntVector = NonFinalStates;
-    vector<vector<int>> finalStatesRelated = separateFinalStates(finalStates);
-    vector<int> mySS;
-    updateMapValues(1,NonFinalStates,keyOfStates);
-    partitions.insert(pair<int, vector<int> >(1,NonFinalStates));
-    mySS.push_back(1);
 
-         for(int i = 0; i < finalStatesRelated.size(); i++){
-                numberOfSets++;
-                updateMapValues(numberOfSets,finalStatesRelated[i],keyOfStates);
-                partitions.insert(pair<int, vector<int> >(numberOfSets,finalStatesRelated[i]));
-              mySS.push_back(numberOfSets);
-        }
+    queue<int> whichPartition;
+
+    vector<int> dividedPartitions;
+    vector<int> finalStates = DFA.get_final_to_DFA();
+    vector<int> NonFinalStates = getNonFinalStates(DFA.get_vertices(),finalStates);
+    vector<int> currntVector = NonFinalStates;
+    vector<transition> transitions = DFA.get_tran();
+    vector<char> inputs = getInputs(transitions);
+    vector<vector<int>> finalStatesRelated = separateFinalStates(finalStates);
+
+    int numberOfSets = initial_values(whichPartition, partitions,NonFinalStates, finalStatesRelated, keyOfStates);
 
     while(currntVector.size() > counter)
     {
         string nextStates = findNextStats (currntVector[counter], transitions, inputs, keyOfStates);
         pre_result[nextStates].push_back(currntVector.at(counter));
         counter++;
-        if(counter >= currntVector.size())
+        if(currntVector.size() <= counter)
         {
             if (pre_result.size() > 1)
             {
@@ -159,31 +179,28 @@ map<int, vector<int> > minimizaion (FA DFA)
                     numberOfSets++;
                     partitions.insert(pair<int,vector<int> >(numberOfSets, it->second));
                 }
-                partitions[0].push_back(whichPartition);
+                dividedPartitions.push_back(whichPartition.front());
             }
-            mySS.erase(mySS.begin());
-            if(!mySS.empty())
+            whichPartition.pop();
+            if(!whichPartition.empty())
             {
-                whichPartition= mySS.at(0);
-                currntVector = partitions[whichPartition];
+                currntVector = partitions[whichPartition.front()];
             }
-            else if(!partitions[0].empty())
+            else if(!dividedPartitions.empty())
             {
-                for(int i = 0; i< partitions[0].size(); i++)
-                    partitions.erase(partitions[0].at(i));
+                for(int i = 0; i< dividedPartitions.size(); i++)
+                    partitions.erase(dividedPartitions.at(i));
 
-                partitions.erase(0);
+                dividedPartitions.clear();
                 for (std::map<int,vector<int> >::iterator it = partitions.begin(); it!=partitions.end(); ++it)
                 {
                     updateMapValues(it->first,it->second,keyOfStates);
-                    mySS.push_back(it->first);
+                    whichPartition.push(it->first);
                 }
-                whichPartition = partitions.begin()->first;
-                currntVector = partitions[whichPartition];
+                currntVector = partitions[whichPartition.front()];
             }
             else
             {
-                partitions.erase(0);
                 break;
             }
             pre_result.clear();
@@ -194,9 +211,9 @@ map<int, vector<int> > minimizaion (FA DFA)
 }
 
 /**-----------------------------------------------------------------------------------------
- * USEAGE : Build the follow set of each nonterminal
- * Take   : production to each nonterminal
- * RETURN :
+ * USEAGE : make states diagram
+ * Take   : minimization result and DFA result
+ * RETURN : class of diagram contains vertices and transitions
  *-----------------------------------------------------------------------------------------*/
 
 FA  minimizedTable (map<int, vector<int> > partitions,FA DFA)
@@ -237,7 +254,9 @@ FA  minimizedTable (map<int, vector<int> > partitions,FA DFA)
             v.push_back(finalStatesMap[finalStates[i]]);
             Mini.insert(pair<int,vector<string> >(finalStates[i],v));
             result.set_final_to_DFA(finalStates[i]);
-        } else {
+        }
+        else
+        {
             Mini[keyOfStates[finalStates[i]]].push_back(finalStatesMap[finalStates[i]]);
         }
     }
