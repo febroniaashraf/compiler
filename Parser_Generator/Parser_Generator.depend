@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1588230289 source:c:\users\osman\documents\github\compiler\parser_generator\main.cpp
+1588315373 source:c:\users\osman\documents\github\compiler\parser_generator\main.cpp
 	<iostream>
 	"recource.h"
 	"First.h"
@@ -7,6 +7,7 @@
 	"leftMostDerivation.h"
 	"Bonus.h"
 	"Table.h"
+	"ClassFA.h"
 
 1587908299 source:d:\codes\compilergit\compiler\parser_generator\main.cpp
 	<iostream>
@@ -123,5 +124,12 @@
 1588201306 source:h:\github\compiler\parser_generator\leftmostderivation.cpp
 	"leftMostDerivation.h"
 	"First.h"
+	"recource.h"
+
+1588315351 source:c:\users\osman\documents\github\compiler\parser_generator\classfa.cpp
+	"ClassFA.h"
+	"recource.h"
+
+1588315365 c:\users\osman\documents\github\compiler\parser_generator\classfa.h
 	"recource.h"
 
