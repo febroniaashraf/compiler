@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1587967772 source:c:\users\osman\documents\github\compiler\parser_generator\main.cpp
+1588315373 source:c:\users\osman\documents\github\compiler\parser_generator\main.cpp
 	<iostream>
 	"recource.h"
 	"First.h"
@@ -7,6 +7,7 @@
 	"leftMostDerivation.h"
 	"Bonus.h"
 	"Table.h"
+	"ClassFA.h"
 
 1587908299 source:d:\codes\compilergit\compiler\parser_generator\main.cpp
 	<iostream>
@@ -16,11 +17,11 @@
 	<iterator>
 	<algorithm>
 
-1588004280 source:c:\users\osman\documents\github\compiler\parser_generator\bonus.cpp
+1588229553 source:c:\users\osman\documents\github\compiler\parser_generator\bonus.cpp
 	"recource.h"
 	"Bonus.h"
 
-1588003980 c:\users\osman\documents\github\compiler\parser_generator\recource.h
+1588229553 c:\users\osman\documents\github\compiler\parser_generator\recource.h
 	<iostream>
 	<bits/stdc++.h>
 	<set>
@@ -33,35 +34,35 @@
 	<map>
 	<set>
 
-1587964853 c:\users\osman\documents\github\compiler\parser_generator\table.h
+1588229553 c:\users\osman\documents\github\compiler\parser_generator\table.h
 	"recource.h"
 
-1587964723 c:\users\osman\documents\github\compiler\parser_generator\leftmostderivation.h
+1588229553 c:\users\osman\documents\github\compiler\parser_generator\leftmostderivation.h
 	"recource.h"
 
-1588003784 c:\users\osman\documents\github\compiler\parser_generator\bonus.h
+1588229553 c:\users\osman\documents\github\compiler\parser_generator\bonus.h
 
-1588004064 c:\users\osman\documents\github\compiler\parser_generator\first.h
+1588229553 c:\users\osman\documents\github\compiler\parser_generator\first.h
 	"recource.h"
 
-1587965765 c:\users\osman\documents\github\compiler\parser_generator\follow.h
+1588229553 c:\users\osman\documents\github\compiler\parser_generator\follow.h
 	"recource.h"
 
-1588003604 source:c:\users\osman\documents\github\compiler\parser_generator\first.cpp
+1588229553 source:c:\users\osman\documents\github\compiler\parser_generator\first.cpp
 	"First.h"
 	"recource.h"
 
-1588004280 source:c:\users\osman\documents\github\compiler\parser_generator\folllow.cpp
+1588229954 source:c:\users\osman\documents\github\compiler\parser_generator\folllow.cpp
 	"Follow.h"
 	"First.h"
 	"recource.h"
 
-1588003576 source:c:\users\osman\documents\github\compiler\parser_generator\leftmostderivation.cpp
+1588230408 source:c:\users\osman\documents\github\compiler\parser_generator\leftmostderivation.cpp
 	"leftMostDerivation.h"
 	"First.h"
 	"recource.h"
 
-1587925748 source:c:\users\osman\documents\github\compiler\parser_generator\table.cpp
+1588229553 source:c:\users\osman\documents\github\compiler\parser_generator\table.cpp
 	"Table.h"
 	"recource.h"
 	"First.h"
@@ -123,5 +124,12 @@
 1589547379 source:h:\github\compiler\parser_generator\leftmostderivation.cpp
 	"leftMostDerivation.h"
 	"First.h"
+	"recource.h"
+
+1588315351 source:c:\users\osman\documents\github\compiler\parser_generator\classfa.cpp
+	"ClassFA.h"
+	"recource.h"
+
+1588315365 c:\users\osman\documents\github\compiler\parser_generator\classfa.h
 	"recource.h"
 

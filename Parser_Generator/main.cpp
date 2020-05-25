@@ -5,67 +5,7 @@
 #include "leftMostDerivation.h"
 #include "Bonus.h"
 #include "Table.h"
-//////////////////////////////////////////////////////////////////////////////////////////////////
-//
-class Transition_Digrams
-{
-public:
-    int no_vertices;
-    int final_state;
-    int start_state;
-    vector<transition> transitions;
-    vector<int> vertices;
-
-    Transition_Digrams ()
-    {
-        no_vertices = 2;
-        final_state = 1;
-        start_state = 0;
-    }
-    void set_transtions(int from, int to, string tran_symbol)
-    {
-        struct transition tran;
-        tran.vertex_from = from;
-        tran.vertex_to = to;
-        tran.symbol = tran_symbol;
-        transitions.push_back(tran);
-    }
-
-    vector<transition> get_tran()
-    {
-        return transitions;
-    }
-
-    void set_startState(int state)
-    {
-        start_state = state;
-    }
-
-    int get_startState()
-    {
-        return start_state;
-    }
-
-    void set_finalState(int state)
-    {
-        final_state = state;
-    }
-
-    int get_finalState()
-    {
-        return final_state;
-    }
-    void display()
-    {
-        struct transition new_trans;
-        for(int i = 0; i < transitions.size(); i++)
-        {
-            new_trans = transitions.at(i);
-            cout<<"q"<<new_trans.vertex_from<<" --> q"<<new_trans.vertex_to<<" : Symbol is "<<new_trans.symbol<<endl;
-        }
-        cout<<"\nThe final state is q"<<get_finalState()<<endl;
-    }
-};
+#include "ClassFA.h"
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -73,12 +13,12 @@ vector<Non_terminal> all_nonTerminals;
 //
 vector<string> terminals;
 //
-vector<pair<string,Transition_Digrams>> tran_Digram;
+vector<pair<string,FA>> tran_Digram;
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**----------------------------------------------------------------------------------------
- * USEAGE : This Function reads output file from Phase 1 as an Input for LeftMostDerivation
- * TAKE   : Queue of string contains The lexical analyzer
+ * USEAGE : Read the input file which contains grammar
+ * TAKE   : File name
  *-----------------------------------------------------------------------------------------*/
 
 void read_inputFile(const char* input_file)
@@ -205,14 +145,13 @@ void read_inputFile(const char* input_file)
 }
 
 /**----------------------------------------------------------------------------------------
- * USEAGE : This Function reads output file from Phase 1 as an Input for LeftMostDerivation
- * TAKE   : Queue of string contains The lexical analyzer
+ * USEAGE : build transition diagrams for each nonterminal of the grammar
  *-----------------------------------------------------------------------------------------*/
 void construct_transitionDigram()
 {
     for(int i=0; i<all_nonTerminals.size(); i++)
     {
-        Transition_Digrams tran;
+        FA tran;
         struct Non_terminal nonTerminal = all_nonTerminals.at(i);
         if(i==0)
         {
@@ -267,7 +206,7 @@ void construct_transitionDigram()
                 }
             }
         }
-        pair<string,Transition_Digrams> digram;
+        pair<string,FA> digram;
         digram.first = nonTerminal.name;
         digram.second = tran;
         tran_Digram.push_back(digram);
@@ -275,8 +214,7 @@ void construct_transitionDigram()
 }
 
 /**----------------------------------------------------------------------------------------
- * USEAGE : This Function reads output file from Phase 1 as an Input for LeftMostDerivation
- * TAKE   : Queue of string contains The lexical analyzer
+ * USEAGE : Print transition diagrams for each nonterminal of the grammar
  *-----------------------------------------------------------------------------------------*/
 void print_transitionDigram()
 {

@@ -249,4 +249,3 @@ void left_recurion(vector<Non_terminal> leftFactoring)
     all_nonTerminals.clear();
     all_nonTerminals = final_nonTerminals;
 }
-

@@ -36,6 +36,8 @@
 		<Unit filename="Bonus.h">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
+		<Unit filename="ClassFA.cpp" />
+		<Unit filename="ClassFA.h" />
 		<Unit filename="First.cpp" />
 		<Unit filename="First.h">
 			<Option target="&lt;{~None~}&gt;" />
