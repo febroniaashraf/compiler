@@ -11,10 +11,11 @@ using namespace std;
 
 int main()
 {
-    read_file("input.txt");
+    read_file("regularExpressions.txt");
     FA result = language();
     FA dfa = NFAtoDFA(result);
     FA mini = minimizedTable(minimizaion(dfa), dfa);
-    read_testProgram("test.txt", mini);
+    mini.display();
+    read_testProgram("test1.txt", mini);
     return 0;
 }

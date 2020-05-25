@@ -289,7 +289,7 @@ void print_transitionDigram()
 
 int main()
 {
-    read_inputFile("input.txt");
+    read_inputFile("grammar.txt");
     vector<Non_terminal> nonTerminals = all_nonTerminals;
     vector<Non_terminal> left_factor = left_factoring(nonTerminals);
     left_recurion(left_factor);
