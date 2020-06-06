@@ -1,0 +1,6 @@
+flex lexical.l
+	bison -y -d semantics.y
+	g++ -std=gnu++0x lex.yy.c y.tab.c
+	a.exe program.txt
+	java -jar jasmin.jar javaByteCode.j
+	java result

@@ -21,7 +21,7 @@
 	"Minimization.cpp"
 	"OutputFile.cpp"
 
-1588200196 source:h:\github\compiler\lexical_analyzer_generator\main.cpp
+1589547830 source:h:\github\compiler\lexical_analyzer_generator\main.cpp
 	<iostream>
 	"recource.h"
 	"ClassFA.cpp"
